@@ -62,7 +62,7 @@ Configurations (appsettings.json)
   }
 }
 ```
-Put the json in appSettings.json file the root directory of this project.
+Put the above json in appSettings.json file in the root directory of the project.
 
 
 Starting Server
