@@ -4,7 +4,7 @@ using Whose_Turn.Context;
 
 namespace Whose_Turn.Repositories
 {
-    public abstract class Repository<T, TU> where T : class
+    public abstract class Repository<T, TU> : IRepository<T, TU> where T : class
     {
         private DatabaseContext _localContext { get; }
         public Repository(DatabaseContext context)
