@@ -11,13 +11,13 @@ namespace Whose_Turn.Migrations
                 table: "Users",
                 column: "HouseHoldId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Users_HouseHolds_HouseHoldId",
-                table: "Users",
-                column: "HouseHoldId",
-                principalTable: "HouseHolds",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_Users_HouseHolds_HouseHoldId",
+            //    table: "Users",
+            //    column: "HouseHoldId",
+            //    principalTable: "HouseHolds",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

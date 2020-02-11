@@ -36,6 +36,9 @@ namespace Whose_Turn.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.ToTable("HouseHolds");
                 });
 
@@ -71,6 +74,8 @@ namespace Whose_Turn.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id");
+
                     b.ToTable("Todos");
                 });
 
@@ -79,6 +84,9 @@ namespace Whose_Turn.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("AccountClosed")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
@@ -95,15 +103,44 @@ namespace Whose_Turn.Migrations
                     b.Property<Guid>("HouseHoldId")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsLockedOut")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("LockoutEndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LockoutReason")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SecurityToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("TwoFactorRequired")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("HouseHoldId");
+
+                    b.HasIndex("Id", "Email")
+                        .IsUnique();
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Whose_Turn.Context.Entities.User", b =>
+                {
+                    b.HasOne("Whose_Turn.Context.Entities.HouseHold", "MyHouseHold")
+                        .WithMany("Users")
+                        .HasForeignKey("HouseHoldId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
