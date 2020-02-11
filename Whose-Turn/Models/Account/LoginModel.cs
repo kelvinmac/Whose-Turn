@@ -9,7 +9,7 @@ namespace Whose_Turn.Models
         /// Gets or sets the username
         /// </summary>
         [Required]
-        public string Username { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets the password
