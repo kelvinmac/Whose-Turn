@@ -1,21 +1,29 @@
-import uuid from 'react-uuid'
+
+
+import Enumerable from "linq";
 export default function errorReducer (state ={
     critical: [],
     alert: []
 }, {type, payload}) {
     switch (type) {
-        case "APP::ERRORS::CRITICAL::UPDATED":
+        case "APP::ERRORS::CRITICAL::UPDATED": {
+            const copy = [...state.critical];
+
+            // find the error being updated
+            const error = copy.find(c => c.id === payload.id);
+
             return {
                 ...state,
                 critical: [
-                    ...state.critical,
+                    // Filters out the old state
+                    ...copy.filter(e => e.id !== payload.id),
                     {
-
-                            actions: null,
+                        ...error,
                         ...payload
                     }
                 ]
             };
+        }
         case "APP::ERRORS::ALERT::UPDATED":
             return {
                 ...state,
@@ -30,3 +38,15 @@ export default function errorReducer (state ={
             return state;
     }
 }
+
+// return {
+//     ...state,
+//     critical: [
+//         ...state.critical,
+//         {
+//             id: payload.id == null ? uuid() : payload.id,
+//             actions: null,
+//             ...payload
+//         }
+//     ]
+// };
