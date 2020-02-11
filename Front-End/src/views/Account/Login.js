@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function Login(props) {
+const Login = (props) => {
     const classes = useStyles();
     const [loginData, setLoginData] = useState({
         remember: true
@@ -81,6 +81,7 @@ function Login(props) {
     if (props.user.isAuthenticated) {
         return (<Redirect to={from}/>)
     }
+
 
     else {
         return (
@@ -164,7 +165,7 @@ function Login(props) {
             </Container>
         )
     }
-}
+};
 
 const matchDispatchToProps = {
     authenticateUser

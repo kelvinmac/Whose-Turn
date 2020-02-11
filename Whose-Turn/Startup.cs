@@ -37,6 +37,23 @@ namespace Whose_Turn
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var reactConfig = new ReactConfigModel();
+            Configuration.Bind("React", reactConfig);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("React",
+                builder =>
+                {
+                    builder
+                       .WithOrigins(reactConfig.Uri)
+                       .AllowAnyHeader()
+                       .AllowAnyMethod()
+                       .AllowCredentials();
+                });
+
+            });
+
             services.AddEntityFrameworkSqlite()
                 .AddDbContext<DatabaseContext>();
 
@@ -96,20 +113,9 @@ namespace Whose_Turn
                 app.UseDeveloperExceptionPage();
             }
 
-            var reactConfig = new ReactConfigModel();
-            Configuration.Bind("React", reactConfig);
-
-            app.UseCors(builder =>
-            {
-                builder
-                  .WithOrigins(reactConfig.Uri)
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-            });
+            app.UseCors("React");
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthentication(); // this one first
