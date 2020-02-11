@@ -6,4 +6,117 @@
   </PropertyGroup>
 
 
+  <ItemGroup>
+    <Folder Include="Context\" />
+    <Folder Include="Context\Entities\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+    <Folder Include="Repositories\Base\" />
+    <Folder Include="ConfigModels\" />
+    <Folder Include="Models\" />
+    <Folder Include="Models\Todo\" />
+    <Folder Include="Managers\" />
+    <Folder Include="Models\Account\" />
+    <Folder Include="Servicebus\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Servicebus\Account\" />
+    <Folder Include="Handlers\" />
+    <Folder Include="Handlers\Account\" />
+    <Folder Include="Servicebus\General\" />
+    <Folder Include="Handlers\General\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
+    <PackageReference Include="NServiceBus" Version="7.2.1" />
+    <PackageReference Include="NServiceBus.Testing" Version="7.2.0" />
+    <PackageReference Include="NServiceBus.Newtonsoft.Json" Version="2.2.0" />
+    <PackageReference Include="NServiceBus.MSDependencyInjection" Version="0.1.4" />
+    <PackageReference Include="SendGrid" Version="9.12.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Context\Models\BaseLevel.cs" />
+    <Compile Remove="Context\Models\CancelledRedeem.cs" />
+    <Compile Remove="Context\Models\Languages.cs" />
+    <Compile Remove="Context\Models\LevelManifests.cs" />
+    <Compile Remove="Context\Models\Players.cs" />
+    <Compile Remove="Context\Models\PlayerSessions.cs" />
+    <Compile Remove="Context\Models\PlayerSubscriptions.cs" />
+    <Compile Remove="Context\Models\QrtzBlobTriggers.cs" />
+    <Compile Remove="Context\Models\QrtzCalendars.cs" />
+    <Compile Remove="Context\Models\QrtzCronTriggers.cs" />
+    <Compile Remove="Context\Models\QrtzFiredTriggers.cs" />
+    <Compile Remove="Context\Models\QrtzJobDetails.cs" />
+    <Compile Remove="Context\Models\QrtzLocks.cs" />
+    <Compile Remove="Context\Models\QrtzPausedTriggerGrps.cs" />
+    <Compile Remove="Context\Models\QrtzSchedulerState.cs" />
+    <Compile Remove="Context\Models\QrtzSimpleTriggers.cs" />
+    <Compile Remove="Context\Models\QrtzSimpropTriggers.cs" />
+    <Compile Remove="Context\Models\QrtzTriggers.cs" />
+    <Compile Remove="Context\Models\RedeemHistories.cs" />
+    <Compile Remove="Context\Models\Roles.cs" />
+    <Compile Remove="Context\Models\ServerCommandLogs.cs" />
+    <Compile Remove="Context\Models\ServerConnectTasks.cs" />
+    <Compile Remove="Context\Models\ServerFacets.cs" />
+    <Compile Remove="Context\Models\Servers.cs" />
+    <Compile Remove="Context\Models\ServerSeasons.cs" />
+    <Compile Remove="Context\Models\ServerSessions.cs" />
+    <Compile Remove="Context\Models\ServerSettings.cs" />
+    <Compile Remove="Context\Models\ServerToLanguages.cs" />
+    <Compile Remove="Context\Models\SubscriptionData.cs" />
+    <Compile Remove="Context\Models\UserRoles.cs" />
+    <Compile Remove="Context\Models\Users.cs" />
+    <Compile Remove="Context\Models\UsersClaims.cs" />
+    <Compile Remove="Context\Entities\CancelledRedeem.cs" />
+    <Compile Remove="Context\Entities\BaseLevel.cs" />
+    <Compile Remove="Context\Entities\Facets.cs" />
+    <Compile Remove="Context\Entities\SubscriptionData.cs" />
+    <Compile Remove="Context\Entities\QrtzBlobTriggers.cs" />
+    <Compile Remove="Context\Entities\ServerCommandLogs.cs" />
+    <Compile Remove="Context\Entities\RedeemHistories.cs" />
+    <Compile Remove="Context\Entities\QrtzTriggers.cs" />
+    <Compile Remove="Context\Entities\ServerSessions.cs" />
+    <Compile Remove="Context\Entities\Servers.cs" />
+    <Compile Remove="Context\Entities\ServerConnectTasks.cs" />
+    <Compile Remove="Context\Entities\QrtzSimpleTriggers.cs" />
+    <Compile Remove="Context\Entities\QrtzCronTriggers.cs" />
+    <Compile Remove="Context\Entities\ServerToLanguages.cs" />
+    <Compile Remove="Context\Entities\Roles.cs" />
+    <Compile Remove="Context\Entities\Users.cs" />
+    <Compile Remove="Context\Entities\QrtzCalendars.cs" />
+    <Compile Remove="Context\Entities\ServerSettings.cs" />
+    <Compile Remove="Context\Entities\QrtzLocks.cs" />
+    <Compile Remove="Context\Entities\UsersClaims.cs" />
+    <Compile Remove="Context\Entities\ServerSeasons.cs" />
+    <Compile Remove="Context\Entities\PlayerSubscriptions.cs" />
+    <Compile Remove="Context\Entities\QrtzFiredTriggers.cs" />
+    <Compile Remove="Context\Entities\QrtzPausedTriggerGrps.cs" />
+    <Compile Remove="Context\Entities\QrtzJobDetails.cs" />
+    <Compile Remove="Context\Entities\ServerFacets.cs" />
+    <Compile Remove="Context\Entities\QrtzSimpropTriggers.cs" />
+    <Compile Remove="Context\Entities\Players.cs" />
+    <Compile Remove="Context\Entities\QrtzSchedulerState.cs" />
+    <Compile Remove="Context\Entities\PlayerSessions.cs" />
+    <Compile Remove="Context\Entities\UserRoles.cs" />
+    <Compile Remove="Context\WhoseturnDbContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Database\WhoseTurnDb.db" />
+  </ItemGroup>
 </Project>

@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace Management.Api.Services
+namespace Whose_Turn.Services
 {
     /// <summary>
-    ///     Implements hashing methods, see https://github.com/aspnet/AspNetIdentity/blob/master/src/Microsoft.AspNet.Identity.Core/Crypto.cs
+    /// Implements hashing methods, see https://github.com/aspnet/AspNetIdentity/blob/master/src/Microsoft.AspNet.Identity.Core/Crypto.cs
     /// </summary>
-    public class PasswordHasher
+    public class PasswordHashing
     {
         private const int PBKDF2IterCount = 1000; // default for Rfc2898DeriveBytes
         private const int PBKDF2SubkeyLength = 256 / 8; // 256 bits
         private const int SaltSize = 256 / 8; // 128 bits
 
-        public PasswordHasher()
-        {
-
-        }
-
         /// <summary>
-        ///     Hash a password
+        /// Hash a password
         /// </summary>
         /// <param name="password"></param>
         /// <returns></returns>
@@ -45,24 +40,23 @@ namespace Management.Api.Services
         }
 
         /// <summary>
-        ///     Verify that a password matches the hashedPassword
+        /// Verify that a password matches the hashedPassword
         /// </summary>
-        /// <param name="hashedKey"></param>
-        /// <param name="providedKey"></param>
+        /// <param name="hashedPassword"></param>
+        /// <param name="providedPassword"></param>
         /// <returns></returns> 
-        public bool VerifyHashedPassword(string hashedKey, string providedKey)
+        public bool VerifyHashedPassword(string hashedPassword, string providedPassword)
         {
-            if (hashedKey == null)
+            if (hashedPassword == null)
             {
                 return false;
             }
-            if (providedKey == null)
+            if (providedPassword == null)
             {
-                throw new ArgumentNullException("password");
+                throw new ArgumentNullException(nameof(providedPassword));
             }
 
-            var hashedKeyBytes = Convert.FromBase64String(hashedKey);
-
+            var hashedKeyBytes = Convert.FromBase64String(hashedPassword);
 
             if (hashedKeyBytes.Length != (1 + SaltSize + PBKDF2SubkeyLength) || hashedKeyBytes[0] != 0x00)
             {
@@ -76,7 +70,7 @@ namespace Management.Api.Services
             Buffer.BlockCopy(hashedKeyBytes, 1 + SaltSize, storedSubkey, 0, PBKDF2SubkeyLength);
 
             byte[] generatedSubkey;
-            using (var deriveBytes = new Rfc2898DeriveBytes(providedKey, salt, PBKDF2IterCount))
+            using (var deriveBytes = new Rfc2898DeriveBytes(providedPassword, salt, PBKDF2IterCount))
             {
                 generatedSubkey = deriveBytes.GetBytes(PBKDF2SubkeyLength);
             }

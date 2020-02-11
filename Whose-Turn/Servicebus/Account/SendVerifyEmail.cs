@@ -1,10 +1,13 @@
 ﻿using System;
-namespace Whose_Turn.Servicebus.Account
+using NServiceBus;
+
+namespace Whose_Turn.Servicebus
 {
-    public class SendVerifyEmail
+    public class SendVerifyEmail : ICommand
     {
-        public SendVerifyEmail()
-        {
-        }
+        /// <summary>
+        /// Gets or sets the user Id
+        /// </summary>
+        public Guid UserId { get; set; }
     }
 }
