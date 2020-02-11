@@ -1,4 +1,4 @@
-﻿namespace Management.Api.Emailing.Configurations
+﻿namespace Whose_Turn.ConfigModels
 {
     public class SendGridConfiguration
     {
