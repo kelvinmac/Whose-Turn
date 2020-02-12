@@ -7,37 +7,42 @@ export default function errorReducer (state ={
 }, {type, payload}) {
     switch (type) {
         case "APP::ERRORS::CRITICAL::UPDATED": {
-            const copy = [...state.critical];
-
-            // find the error being updated
-            const error = copy.find(c => c.id === payload.id);
 
             return {
                 ...state,
-                critical: [
-                    // Filters out the old state
-                    ...copy.filter(e => e.id !== payload.id),
-                    {
-                        ...error,
-                        ...payload
-                    }
-                ]
-            };
+                critical:  computeNewState(state, payload)
+            }
         }
-        case "APP::ERRORS::ALERT::UPDATED":
-            return {
+
+        case "APP::ERRORS::ALERT::UPDATED": {
+
+            return{
                 ...state,
-                alert: [
-                    ...state.alert,
-                    {
-                        ...payload
-                    }
-                ]
-            };
+                alert:  computeNewState(state, payload)
+            }
+        }
         default:
             return state;
     }
 }
+
+// Compute the new state based using the payload
+const computeNewState = (state, payload) => {
+    const copy = [...state.alert];
+    let alert = copy.find(a => a.id === payload.d);
+
+    if (payload.remove)
+        alert = null;
+    else
+        alert = {...alert, ...payload};
+
+    return [
+        // Filters out the old state
+        ...copy.filter(e => e.id !== payload.id), {
+            ...alert
+        }
+    ];
+};
 
 // return {
 //     ...state,

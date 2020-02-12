@@ -13,6 +13,9 @@ export function updateCritical(options) {
 }
 
 export function updateAlert(options){
+    if(options.id == null)
+        options.id = uuid();
+
     return {
         type: "APP::ERRORS::ALERT::UPDATED",
         payload:{
