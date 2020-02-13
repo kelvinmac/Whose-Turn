@@ -1,10 +1,10 @@
-import React from "react";
+
+
 import axios from "axios";
 import {updateBackdropState} from "./loadingActions";
 import {updateCritical} from "./errorActions";
 import {updateAlert} from "./errorActions";
 import {updateLoginValidation} from './validationActions'
-import {useHistory} from "react-router-dom";
 
 
 export function authenticateUser(model) {

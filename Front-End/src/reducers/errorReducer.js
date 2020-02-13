@@ -1,6 +1,6 @@
 
 
-import Enumerable from "linq";
+
 export default function errorReducer (state ={
     critical: [],
     alert: []
