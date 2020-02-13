@@ -12,9 +12,9 @@ import {configureStore} from "./store";
 import MainLayout from "./layouts";
 import EmptyLayout from "./layouts/EmptyLayout";
 import FullScreenLoading from "./Components/Loading/FullScreenLoading";
-import initInterceptors from "./axios/interceptors";
+import initInterceptors from "./mixins/axios/interceptors";
 import CriticalError from "./Components/Errors/CriticalError";
-import Error404 from "./views/Error404";
+import Logout from "./views/Account/Logout";
 
 export const store = configureStore();
 
@@ -89,17 +89,17 @@ class App extends React.Component {
                                             component={TodaysItems}
                                             layout={MainLayout}/>
 
-                    <Route path="/404"
-                           component={Error404}
-                    />
-
-                    <RouteWithLayout path="/login"
-                                     component={Login}
-                                     layout={EmptyLayout}/>
+                    <PrivateRouteWithLayout path="/logout"
+                                            component={Logout}
+                                            layout={MainLayout}/>
 
                     <PrivateRouteWithLayout path="/" exact={true}
                                             component={Home}
                                             layout={MainLayout}/>
+
+                    <RouteWithLayout path="/login"
+                                     component={Login}
+                                     layout={EmptyLayout}/>
                 </Switch>
             </StoreProvider>
         );

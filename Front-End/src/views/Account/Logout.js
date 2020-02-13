@@ -1,12 +1,18 @@
-import {authenticateUser} from "../../actions/authenticationActions";
+import React from "react";
+import {logout} from "../../actions/authenticationActions";
 import {connect} from "react-redux";
+import {Redirect} from "react-router-dom";
 
-function Logout(props){
+const Logout = (props) => {
 
-}
+    props.logout();
+    return(
+        <Redirect to='login'/>
+    );
+};
 
 const matchDispatchToProps = {
-    authenticateUser
+    logout
 };
 
 const mapStateToProps = (state) => {};
