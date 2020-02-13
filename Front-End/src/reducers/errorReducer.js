@@ -10,7 +10,7 @@ export default function errorReducer (state ={
 
             return {
                 ...state,
-                critical:  computeNewState(state, payload)
+                critical:  computeNewState(state.critical, payload)
             }
         }
 
@@ -18,7 +18,7 @@ export default function errorReducer (state ={
 
             return{
                 ...state,
-                alert:  computeNewState(state, payload)
+                alert:  computeNewState(state.alert, payload)
             }
         }
         default:
@@ -28,18 +28,18 @@ export default function errorReducer (state ={
 
 // Compute the new state based using the payload
 const computeNewState = (state, payload) => {
-    const copy = [...state.alert];
-    let alert = copy.find(a => a.id === payload.d);
+    const copy = [...state];
+    let currentState = copy.find(a => a.id === payload.d);
 
     if (payload.remove)
-        alert = null;
+        currentState = null;
     else
-        alert = {...alert, ...payload};
+        currentState = {...currentState, ...payload};
 
     return [
         // Filters out the old state
         ...copy.filter(e => e.id !== payload.id), {
-            ...alert
+            ...currentState
         }
     ];
 };

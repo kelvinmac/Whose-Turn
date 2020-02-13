@@ -12,13 +12,7 @@ import uuid from 'react-uuid';
 
 function CriticalError(props) {
     const handleClose = (event, id) => {
-
-        if (Enumerable.from(props.errors)
-            .firstOrDefault(e => e.id === id) === null) {
-            return;
-        }
-
-        props.updateCritical({show: false, id});
+        props.updateCritical({remove: true, id});
     };
 
     return (
