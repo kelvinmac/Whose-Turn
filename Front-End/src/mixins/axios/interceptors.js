@@ -1,6 +1,6 @@
 import axios from "axios";
-import {tokenExpired} from "../actions/authenticationActions";
-import {store} from "../App";
+import {tokenExpired} from "../../actions/authenticationActions";
+import {store} from "../../App";
 
 export default function initInterceptors() {
 // Attach access token to every request

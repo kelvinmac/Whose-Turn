@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link } from 'react-router-dom'
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import {Link} from 'react-router-dom'
+import {makeStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import List from '@material-ui/core/List';
@@ -16,6 +16,7 @@ import HistoryIcon from '@material-ui/icons/History';
 import DateIcon from '@material-ui/icons/DateRange';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import HomeIcon from '@material-ui/icons/Home'
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({

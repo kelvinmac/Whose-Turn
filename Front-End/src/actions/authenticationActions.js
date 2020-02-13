@@ -1,28 +1,42 @@
-
-
 import React from "react";
 import axios from "axios";
 import {updateBackdropState} from "./loadingActions";
 import {updateCritical} from "./errorActions";
 import {updateAlert} from "./errorActions";
 import {updateLoginValidation} from './validationActions'
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 
 export function authenticateUser(model) {
-    return function (dispatch) {
+    return async function (dispatch) {
+
         dispatch(updateBackdropState(true));
+
+        const instance = axios.create();
+        instance.interceptors.request.use(function (config) {
+            return config;
+        }, function (error) {
+            return Promise.reject(error);
+        });
 
         return dispatch({
             type: "USER::AUTHENTICATION::AUTHENTICATING",
-            payload: axios({
-                method: 'post',
-                url: `${process.env.REACT_APP_API_URI}account/token`,
-                data: model,
-            })
+            payload: instance.post(`${process.env.REACT_APP_API_URI}account/token`, model)
         }).then((response) => {
+
+            const {token} = response.value.data;
+            localStorage.setItem("__access_token", token);
+
+            debugger;
+
+            if (!model.remember) {
+                localStorage.setItem("__access_token_time", new Date().getTime().toString());
+            } else {
+                localStorage.removeItem("__access_token_time");
+            }
+
             // Get user profile
-            return dispatch(updateUserProfile(response.value.data.token));
+            return dispatch(updateUserProfile());
         }).catch((error) => {
             const {response} = error;
 
@@ -76,7 +90,7 @@ export function tokenExpired() {
             actions: [
                 {
                     actionText: "Goto Login",
-                    clickHandler: (event) =>{
+                    clickHandler: (event) => {
                         document.location = "/login";
                     }
                 }
@@ -88,11 +102,8 @@ export function tokenExpired() {
     }
 }
 
-export function updateUserProfile(token) {
+export function updateUserProfile() {
     return function (dispatch) {
-
-        // Write the token
-        localStorage.setItem("__access_token", token);
 
         return dispatch({
             type: "USER::PROFILE::REQUEST",

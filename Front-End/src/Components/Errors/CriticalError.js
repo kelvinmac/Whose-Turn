@@ -12,13 +12,7 @@ import uuid from 'react-uuid';
 
 function CriticalError(props) {
     const handleClose = (event, id) => {
-
-        if (Enumerable.from(props.errors)
-            .firstOrDefault(e => e.id === id) === null) {
-            return;
-        }
-
-        props.updateCritical({show: false, id});
+        props.updateCritical({remove: true, id});
     };
 
     return (
@@ -30,17 +24,17 @@ function CriticalError(props) {
                     open={error.show}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description">
-                    <DialogTitle key={uuid()} id="alert-dialog-title">
+                    <DialogTitle id="alert-dialog-title">
                         {error.title || "Something isn't right"}
                     </DialogTitle>
-                    <DialogContent key={uuid()}>
+                    <DialogContent>
                         <DialogContentText key={uuid()} id="alert-dialog-description">
                             {error.message}
                         </DialogContentText>
                     </DialogContent>
-                    <DialogActions key={uuid()}>
+                    <DialogActions>
                         {error.actions == null &&
-                        <Button key={uuid()}
+                        <Button
                                 onClick={(event => {
                                     handleClose(event, error.id)
                                 })} color="primary">
@@ -51,7 +45,7 @@ function CriticalError(props) {
                             const {actionText, clickHandler} = a;
 
                             return (
-                                <Button key={actionText} onClick={(event => {
+                                <Button key={`${actionText}-${uuid()}`} onClick={(event => {
                                     handleClose(event, error.id);
                                     return clickHandler(event, error.id);
                                 })} color="primary">
