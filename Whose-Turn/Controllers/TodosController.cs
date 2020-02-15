@@ -33,13 +33,13 @@ namespace Whose_Turn.Controllers
         private readonly ILogger _logger;
 
         private readonly ITodoRepository _todoRepo;
-        private readonly IHouseHoldRepository _householdRepo;
+        private readonly IHouseholdRepository _householdRepo;
 
         public TodosController(IServiceProvider provider)
         {
             _logger = provider.GetService<ILogger<TodosController>>();
 
-            _householdRepo = provider.GetService<IHouseHoldRepository>();
+            _householdRepo = provider.GetService<IHouseholdRepository>();
             _todoRepo = provider.GetService<ITodoRepository>();
         }
 

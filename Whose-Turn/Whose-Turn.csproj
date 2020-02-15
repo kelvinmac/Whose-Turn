@@ -25,6 +25,7 @@
     <Folder Include="Handlers\Account\" />
     <Folder Include="Servicebus\General\" />
     <Folder Include="Handlers\General\" />
+    <Folder Include="Models\Household\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.1">

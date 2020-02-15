@@ -22,6 +22,7 @@ using Whose_Turn.Context;
 using Whose_Turn.Context.Entities;
 using Whose_Turn.Extensions;
 using Whose_Turn.Managers;
+using Whose_Turn.Repositories;
 using Whose_Turn.Services;
 
 namespace Whose_Turn
@@ -55,6 +56,9 @@ namespace Whose_Turn
 
             services.AddTransient<PasswordHashing>();
             services.AddScoped<WhoseTurnUserManager>();
+
+            services.AddScoped<IHouseholdRepository, HouseholdRepository>();
+            services.AddScoped<ITodoRepository, TodoRepository>();
 
             services.AddTransient(s =>
             {
