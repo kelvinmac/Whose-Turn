@@ -37,14 +37,16 @@ namespace Whose_Turn.Managers
         private static class LogEvents
         {
             public static readonly EventId CreatingUser = new EventId(1, nameof(CreateUser));
+            public static readonly EventId GeneratingRefreshToken = new EventId(2, nameof(GenerateRefreshTokenAsync));
+            public static readonly EventId GeneratingToken = new EventId(3, nameof(GenerateTokenAsync));
         }
 
         /// <summary>
         /// Gets the type of the security stamp claim.
         /// </summary>
         /// <value>The type of the security stamp claim.</value>
-        public string SecurityStampClaimType
-            => "WHOSE_TURN.Identity.SecurityStamp";
+        public static string SecurityTokenClaimType
+            => "WHOSE_TURN.Identity.SecurityToken";
 
         private readonly ILogger _logger;
 
@@ -67,7 +69,7 @@ namespace Whose_Turn.Managers
         /// </summary>
         /// <param name="id"> The user identifier</param>
         /// <returns></returns>
-        public  Task<User> FindUserById(Guid id)
+        public Task<User> FindUserById(Guid id)
         {
             var user = _databaseContext.Users.FindAsync(id).AsTask();
             return user;
@@ -86,9 +88,6 @@ namespace Whose_Turn.Managers
 
             return user;
         }
-
-
-
 
         /// <summary>
         /// Will try to authenticate using the provided details and return an access token token if successfull.
@@ -194,7 +193,7 @@ namespace Whose_Turn.Managers
 
             return new AuthResult
             {
-                Result =SignInResult.Success,
+                Result = SignInResult.Success,
                 Token = user.Id.ToString()
             };
         }
@@ -210,14 +209,14 @@ namespace Whose_Turn.Managers
                 throw new ArgumentNullException($"{nameof(clientId)}");
 
             var id = new ClaimsIdentity("JWT", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            var secKey = await GetSecurityStampAsync(clientId);
+            var secKey = await GetSecurityTokenAsync(clientId);
 
             var user = await FindUserById(clientId);
 
             // Add default claims
             id.AddClaim(new Claim(ClaimTypes.NameIdentifier, clientId.ToString(), ClaimValueTypes.String));
             id.AddClaim(new Claim(ClaimTypes.Name, user.Email, ClaimValueTypes.String));
-            id.AddClaim(new Claim(SecurityStampClaimType, secKey, ClaimValueTypes.String));
+            id.AddClaim(new Claim(SecurityTokenClaimType, secKey, ClaimValueTypes.String));
 
             return id;
         }
@@ -242,11 +241,25 @@ namespace Whose_Turn.Managers
         /// </summary>
         /// <param name="clientId"></param>
         /// <returns></returns>
-        private async Task<string> GetSecurityStampAsync(Guid clientId)
+        public Task<string> GetSecurityTokenAsync(Guid clientId)
         {
-            User user = await GetUser(clientId);
+            return _databaseContext.Users.Where(s => s.Id == clientId).Select(s => s.SecurityToken)
+                  .FirstOrDefaultAsync();
 
-            return user.SecurityToken.ToString();
+        }
+
+        /// <summary>
+        /// Updates the current user security token
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <returns></returns>
+        public async Task UpdateSecurityToken(Guid clientId)
+        {
+            var user = await GetUser(clientId);
+
+            user.SecurityToken = Guid.NewGuid().ToString();
+            _databaseContext.Update(user);
+            await _databaseContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -290,7 +303,45 @@ namespace Whose_Turn.Managers
             // Create a header and add it to the request pipeline 
             var bearer = new JwtSecurityTokenHandler().WriteToken(token);
 
+            _logger.LogInformation(LogEvents.GeneratingToken, "Succesfully generated JWT token for user {userId} with security token {securityToken}",
+               user.Id, user.SecurityToken);
+
             return bearer;
+        }
+
+        /// <summary>
+        /// Generates a refresh token from the given claims principle
+        /// </summary>
+        /// <param name="claimsPrinciple"></param>
+        /// <returns></returns>
+        public async Task<string> GenerateRefreshTokenAsync(ClaimsPrincipal claimsPrinciple)
+        {
+            try
+            {
+                var jwtToken = claimsPrinciple.FindFirst(SecurityTokenClaimType).Value;
+                var userId = Guid.Parse(claimsPrinciple.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+                var currentToken = await GetSecurityTokenAsync(userId);
+
+                if (!currentToken.Equals(jwtToken, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _logger.LogError(LogEvents.GeneratingRefreshToken, "Could not generate refresh token, security token invalid");
+                    return null;
+                }
+
+                await UpdateSecurityToken(userId);
+
+                _logger.LogInformation(LogEvents.GeneratingRefreshToken, "Generatinig refresh token for user {userId} with security token {securityToken}",
+                    userId, jwtToken);
+                return await GenerateTokenAsync(await GetUser(userId));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(LogEvents.GeneratingRefreshToken,
+                    e,
+                    "There was an error while generating refresh token for a user");
+                return null;
+            }
         }
 
         /// <summary>
