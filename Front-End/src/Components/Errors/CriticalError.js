@@ -20,7 +20,7 @@ function CriticalError(props) {
             return (
                 <Dialog
                     key={error.id}
-                    open={error.show}
+                    open={true}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">
