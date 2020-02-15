@@ -1,9 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect} from "react";
 import axios from 'axios';
 import TodoItems from './TodoItem'
-import Backdrop from '@material-ui/core/Backdrop';
 import Button from "@material-ui/core/Button";
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -36,6 +34,9 @@ export default function Todos(props) {
                     ...todo,
                     isCompleted: !todo.isCompleted
                 };
+            }
+            else{
+                return null;
             }
         }));
     };

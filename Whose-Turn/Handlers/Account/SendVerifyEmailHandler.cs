@@ -17,12 +17,12 @@ namespace Whose_Turn.Handlers.Account
         }
 
         private readonly ILogger _logger;
-        private readonly Usermanager _usermanager;
+        private readonly WhoseTurnUserManager _usermanager;
 
         public SendVerifyEmailHandler(IServiceProvider serviceProvider)
         {
             _logger = serviceProvider.GetService<ILogger<SendVerifyEmailHandler>>();
-            _usermanager = serviceProvider.GetService<Usermanager>();
+            _usermanager = serviceProvider.GetService<WhoseTurnUserManager>();
         }
 
         public async Task Handle(SendVerifyEmail message, IMessageHandlerContext context)

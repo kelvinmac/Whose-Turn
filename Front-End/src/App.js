@@ -3,12 +3,12 @@
 import React from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom'
 import {Provider as StoreProvider} from 'react-redux'
-import NewItem from './views/NewItem'
+import {NewItem} from './views/NewItem'
+import {configureStore} from "./store";
 import TodaysItems from './views/TodaysItems'
 import Item from "./views/Item";
 import Home from "./views/Home";
 import Login from "./views/Account/Login";
-import {configureStore} from "./store";
 import MainLayout from "./layouts";
 import EmptyLayout from "./layouts/EmptyLayout";
 import FullScreenLoading from "./Components/Loading/FullScreenLoading";

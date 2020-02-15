@@ -1,6 +1,6 @@
 
 
-import Enumerable from "linq";
+
 export default function errorReducer (state ={
     critical: [],
     alert: []
@@ -31,27 +31,12 @@ const computeNewState = (state, payload) => {
     const copy = [...state];
     let currentState = copy.find(a => a.id === payload.d);
 
-    if (payload.remove)
-        currentState = null;
-    else
-        currentState = {...currentState, ...payload};
+    // Filters out the old state
+    let result = [...copy.filter(e => e.id !== payload.id)];
 
-    return [
-        // Filters out the old state
-        ...copy.filter(e => e.id !== payload.id), {
-            ...currentState
-        }
-    ];
+    if(!payload.remove) {
+        result.push({...currentState, ...payload});
+    }
+
+    return result;
 };
-
-// return {
-//     ...state,
-//     critical: [
-//         ...state.critical,
-//         {
-//             id: payload.id == null ? uuid() : payload.id,
-//             actions: null,
-//             ...payload
-//         }
-//     ]
-// };

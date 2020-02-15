@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import '../Badge/badge.css'
 import moment from 'moment';
 import Card from "@material-ui/core/Card";
@@ -22,6 +22,7 @@ import red from "@material-ui/core/colors/red";
 import orange from "@material-ui/core/colors/orange";
 import grey from "@material-ui/core/colors/grey";
 import clsx from 'clsx';
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -79,6 +80,8 @@ export default function TodoItems(props){
                 action={(
                     <Button
                         color="primary"
+                        component={Link}
+                        to={"/newItem"}
                         size="small"
                     >
                         <AddIcon className={classes.addIcon} />

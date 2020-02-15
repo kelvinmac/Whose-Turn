@@ -8,13 +8,21 @@ export default function userReducer(state = {
     profile: {}
 }, {type, payload}) {
     switch (type) {
+        case "USER::AUTHENTICATION::REFRESH_TOKEN":
+            return({
+                ...state,
+                authentication: {
+                    isAuthenticated: true,
+                    token: payload
+                }
+            });
+
         case "USER::AUTHENTICATION::AUTHENTICATING::FULFILLED":
             return ({
                 ...state,
                 authentication: {
                     isAuthenticated: true,
-                    token: payload.data.token,
-                    tokenDate: new Date().getDate().toString()
+                    token: payload.data.token
                 }
             });
         case "USER::AUTHENTICATION::AUTHENTICATING::REJECTED":

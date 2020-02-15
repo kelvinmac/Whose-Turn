@@ -7,7 +7,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import Enumerable from "linq";
 import uuid from 'react-uuid';
 
 function CriticalError(props) {
@@ -21,7 +20,7 @@ function CriticalError(props) {
             return (
                 <Dialog
                     key={error.id}
-                    open={error.show}
+                    open={true}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">

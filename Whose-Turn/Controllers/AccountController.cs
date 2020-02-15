@@ -30,14 +30,14 @@ namespace Whose_Turn.Controllers
         }
 
         private readonly ILogger _logger;
-        private readonly Usermanager _userManager;
+        private readonly WhoseTurnUserManager _userManager;
 
         private readonly IEndpointInstance _endpointInstance;
         private readonly IMapper _userProfileMapper;
 
         public AccountController(IServiceProvider provider)
         {
-            _userManager = provider.GetService<Usermanager>();
+            _userManager = provider.GetService<WhoseTurnUserManager>();
             _logger = provider.GetService<ILogger<AccountController>>();
 
             _userProfileMapper = new MapperConfiguration(cfg => cfg.CreateMap<User, ProfileModel>()).CreateMapper();

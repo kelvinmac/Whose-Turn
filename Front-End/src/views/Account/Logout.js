@@ -15,7 +15,9 @@ const matchDispatchToProps = {
     logout
 };
 
-const mapStateToProps = (state) => {};
+const mapStateToProps = (state) => {
+    return {}
+};
 
 export default connect(
     mapStateToProps,
