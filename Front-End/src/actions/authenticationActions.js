@@ -27,8 +27,6 @@ export function authenticateUser(model) {
             const {token} = response.value.data;
             localStorage.setItem("__access_token", token);
 
-            debugger;
-
             if (!model.remember) {
                 localStorage.setItem("__access_token_time", new Date().getTime().toString());
             } else {
@@ -112,5 +110,12 @@ export function updateUserProfile() {
                 url: `${process.env.REACT_APP_API_URI}account/profile`
             })
         })
+    };
+}
+
+export function setRefreshToken(refreshToken) {
+    return {
+        type: "USER::AUTHENTICATION::REFRESH_TOKEN",
+        payload: refreshToken
     };
 }
