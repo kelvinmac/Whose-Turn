@@ -1,9 +1,12 @@
 import React from "react";
 import Todos from "../Components/Todo/Todos";
+import Page from "../Components/Page";
+
 export default function Home() {
     return(
-        <div>
+        <Page
+        title={"Home"}>
             <Todos />
-        </div>
+        </Page>
     )
 }

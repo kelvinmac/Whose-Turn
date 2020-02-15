@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -47,15 +47,18 @@ const options = [
 ];
 
 
-export const TodoType = ({setTodoType, className, ...rest}) => {
+export const TodoType = ({onTodoTypeChanged, className, ...rest}) => {
     const classes = useStyles();
     const [selected, setSelected] = useState("");
 
+    useEffect(() => {
+        if(onTodoTypeChanged != null)
+            onTodoTypeChanged(selected);
+
+    }, [selected]);
+
     const handleChange = (event, option) => {
         setSelected(option);
-
-        if(setTodoType != null)
-            setTodoType(option);
     };
 
     return (

@@ -1,8 +1,6 @@
-
-
-import React , {useState} from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux'
+import React, {useState} from "react";
+import {makeStyles} from '@material-ui/core/styles';
+import {connect} from 'react-redux'
 import {authenticateUser} from "../../actions/authenticationActions";
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {CssBaseline} from "@material-ui/core";
@@ -18,6 +16,7 @@ import Button from "@material-ui/core/Button";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import AlertError from "../../Components/Errors/AlertError";
 import {Redirect} from 'react-router-dom';
+import Page from "../../Components/Page";
 
 function Copyright() {
     return (
@@ -80,89 +79,89 @@ const Login = (props) => {
 
     if (props.user.isAuthenticated) {
         return (<Redirect to={from}/>)
-    }
-
-
-    else {
+    } else {
         return (
-            <Container maxWidth="xs">
-                <CssBaseline/>
+            <Page
+            title={"Whoseturn Login"}>
+                <Container maxWidth="xs">
+                    <CssBaseline/>
 
-                <div className={classes.paper}>
-                    <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon/>
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Sign in
-                    </Typography>
-                    <Box m={3}>
-                        <AlertError/>
-                    </Box>
-                    <form className={classes.form} onSubmit={handleSubmit}>
-                        <TextField
-                            error={props.errors?.email != null}
-                            helperText={props.errors?.email}
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                            onChange={handleChange}
-                        />
+                    <div className={classes.paper}>
+                        <Avatar className={classes.avatar}>
+                            <LockOutlinedIcon/>
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                            Sign in
+                        </Typography>
+                        <Box m={3}>
+                            <AlertError/>
+                        </Box>
+                        <form className={classes.form} onSubmit={handleSubmit}>
+                            <TextField
+                                error={props.errors?.email != null}
+                                helperText={props.errors?.email}
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                onChange={handleChange}
+                            />
 
-                        <TextField
-                            error={props.errors?.password != null}
-                            helperText={props.errors?.password}
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            onChange={handleChange}
-                        />
-                        <FormControlLabel
-                            control={<Checkbox
-                                value="remember"
-                                name="remember"
-                                checked={loginData.remember}
+                            <TextField
+                                error={props.errors?.password != null}
+                                helperText={props.errors?.password}
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                onChange={handleChange}
+                            />
+                            <FormControlLabel
+                                control={<Checkbox
+                                    value="remember"
+                                    name="remember"
+                                    checked={loginData.remember}
+                                    color="primary"
+                                    onChange={handleChange}/>}
+                                label="Remember me"
+                            />
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
                                 color="primary"
-                                onChange={handleChange}/>}
-                            label="Remember me"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                        >
-                            Sign In
-                        </Button>
+                                className={classes.submit}
+                            >
+                                Sign In
+                            </Button>
 
-                        <Grid container>
-                            <Grid item xs>
-                                <Link href="#" variant="body2">
-                                    Forgot password?
-                                </Link>
+                            <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2">
+                                        Forgot password?
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link href="#" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                    </Link>
+                                </Grid>
                             </Grid>
-                            <Grid item>
-                                <Link href="#" variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                </Link>
-                            </Grid>
-                        </Grid>
-                    </form>
-                </div>
-                <Box mt={8}>
-                    <Copyright/>
-                </Box>
-            </Container>
+                        </form>
+                    </div>
+                    <Box mt={8}>
+                        <Copyright/>
+                    </Box>
+                </Container>
+            </Page>
         )
     }
 };
@@ -172,7 +171,7 @@ const matchDispatchToProps = {
 };
 
 const mapStateToProps = (state) => {
-    return({
+    return ({
             user: state.user.authentication,
             errors: state.validation.loginForm
         }
