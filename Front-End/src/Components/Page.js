@@ -1,12 +1,20 @@
 /* eslint-disable no-undef */
-import React, { useEffect } from 'react';
-import { Helmet } from 'react-helmet'
+import React, {useEffect} from 'react';
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import {Helmet} from 'react-helmet'
 import PropTypes from 'prop-types';
 
-const { NODE_ENV, REACT_APP_GA_MEASUREMENT_ID: GA_MEASUREMENT_ID } = process.env;
+const {NODE_ENV, REACT_APP_GA_MEASUREMENT_ID: GA_MEASUREMENT_ID} = process.env;
 
-function Page({ title, children, location, ...rest }) {
+const useStyles = makeStyles((theme) => ({
+        root: {
+            paddingBottom: theme.spacing(3)
+        }
+    }));
 
+function Page({title, children, location, ...rest}) {
+
+    const classes = useStyles();
     useEffect(() => {
         if (NODE_ENV !== 'production') {
             return;
@@ -16,7 +24,9 @@ function Page({ title, children, location, ...rest }) {
     }, []);
 
     return (
-        <div {...rest}>
+        <div
+            className={classes.root}
+            {...rest}>
             <Helmet>
                 <title>{title}</title>
             </Helmet>
