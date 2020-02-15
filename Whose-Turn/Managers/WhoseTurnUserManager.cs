@@ -32,7 +32,7 @@ namespace Whose_Turn.Managers
         public string Token { get; set; }
     }
 
-    public class Usermanager : IDisposable
+    public class WhoseTurnUserManager : IDisposable
     {
         private static class LogEvents
         {
@@ -53,9 +53,9 @@ namespace Whose_Turn.Managers
 
         private readonly JwtTokenConfig _jwtTokenConfig;
 
-        public Usermanager(IServiceProvider serviceProvider)
+        public WhoseTurnUserManager(IServiceProvider serviceProvider)
         {
-            _logger = serviceProvider.GetService<ILogger<Usermanager>>();
+            _logger = serviceProvider.GetService<ILogger<WhoseTurnUserManager>>();
             _passwordHasher = serviceProvider.GetService<PasswordHashing>();
             _databaseContext = serviceProvider.GetService<DatabaseContext>();
 
