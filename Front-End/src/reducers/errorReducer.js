@@ -31,7 +31,6 @@ const computeNewState = (state, payload) => {
     const copy = [...state];
     let currentState = copy.find(a => a.id === payload.d);
 
-    debugger;
     // Filters out the old state
     let result = [...copy.filter(e => e.id !== payload.id)];
 
