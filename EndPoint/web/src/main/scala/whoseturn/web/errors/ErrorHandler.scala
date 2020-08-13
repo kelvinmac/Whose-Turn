@@ -7,7 +7,6 @@ import io.finch.{BadRequest, Output}
 import org.slf4j.LoggerFactory
 
 object ErrorHandler {
-
   private val logger = LoggerFactory.getLogger("whoseturn.web.endpoints")
 
   val apiErrorHandlerAndLogger: PartialFunction[Throwable, Output[Nothing]] = {

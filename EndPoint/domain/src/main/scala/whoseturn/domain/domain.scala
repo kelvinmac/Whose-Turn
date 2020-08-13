@@ -1,13 +1,18 @@
 package whoseturn.domain
 
-import whoseturn.domain.Todos.{NewTodo, Todo}
+import java.util.UUID
 
-trait TodoRepository {
-  def addNewTodo(newTodo: Todo): Todo
-}
+import cats.data._
+import whoseturn.domain.todos.{NewTodo, Todo}
 
-trait UserRepository {}
+import scala.concurrent.Future
 
 trait TodoFactory {
-  def create(newTodo: NewTodo): Todo
+  def create(newTodo: NewTodo): Validated[String, Todo]
+}
+
+trait TodoRepository {
+  def addTodo(newTodo: Todo): Future[Todo]
+  def read(todoId: UUID): Future[Todo]
+  def update(feedItems: Todo): Future[Unit]
 }

@@ -1,4 +1,4 @@
-package whoseturn.domain.Todos
+package whoseturn.domain.todos
 
 import java.util.UUID
 
