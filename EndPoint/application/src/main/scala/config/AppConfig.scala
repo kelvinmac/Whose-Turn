@@ -2,5 +2,6 @@ package config
 
 case class ServiceConfig(port: Int)
 
-case class AppConfig (serviceConfig: ServiceConfig)
+case class CassandraConfig()
 
+case class AppConfig(serviceConfig: ServiceConfig, cassandraConfig: CassandraConfig)
