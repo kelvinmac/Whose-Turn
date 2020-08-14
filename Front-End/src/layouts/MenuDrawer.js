@@ -10,11 +10,11 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import TodoIcon from '@material-ui/icons/FeaturedPlayList';
-import AddIcon from '@material-ui/icons/PostAdd';
+import TodoIcon from '@material-ui/icons/PlaylistAddCheckOutlined';
+import AssignmentIcon from '@material-ui/icons/AssignmentOutlined';
+import MyItemsIcon from '@material-ui/icons/AllInboxOutlined';
 import HistoryIcon from '@material-ui/icons/History';
-import DateIcon from '@material-ui/icons/DateRange';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import HouseIcon from '@material-ui/icons/HouseOutlined';
 import HomeIcon from '@material-ui/icons/Home'
 
 const drawerWidth = 240;
@@ -112,22 +112,15 @@ export default function PersistentDrawerLeft(props) {
                                   to="/"
                                   button key={"Home"}>
                             <ListItemIcon> <HomeIcon/> </ListItemIcon>
-                            <ListItemText primary={"Dashboard"}/>
-                        </ListItem>
-                        <ListItem onClick={drawerItemClicked}
-                                  component={Link}
-                                  to="/items/logcomplete"
-                                  button key={"Add-Turn"}>
-                            <ListItemIcon> <VpnKeyIcon/> </ListItemIcon>
-                            <ListItemText primary={"Log A Turn"}/>
+                            <ListItemText primary={"Home"}/>
                         </ListItem>
 
                         <ListItem onClick={drawerItemClicked}
                                   component={Link}
-                                  to="/items/todays"
+                                  to="/items/myitems"
                                   button key={"My-Turns"}>
-                            <ListItemIcon> <TodoIcon/> </ListItemIcon>
-                            <ListItemText primary={"My Upcoming Todos"}/>
+                            <ListItemIcon> <MyItemsIcon/> </ListItemIcon>
+                            <ListItemText primary={"My TodoItem/Tasks"}/>
                         </ListItem>
                     </List>
 
@@ -136,26 +129,34 @@ export default function PersistentDrawerLeft(props) {
                     <List>
                         <ListItem onClick={drawerItemClicked}
                                   component={Link}
-                                  to="/newItem"
+                                  to="/todo/new"
                                   button key={"Add-Todo"}>
-                            <ListItemIcon> <AddIcon/> </ListItemIcon>
-                            <ListItemText primary={"Add A Todo"}/>
+                            <ListItemIcon> <TodoIcon/> </ListItemIcon>
+                            <ListItemText primary={"Create A Todo"}/>
                         </ListItem>
 
                         <ListItem onClick={drawerItemClicked}
                                   component={Link}
-                                  to="/allhistory"
-                                  button key={"All-Todos"}>
-                            <ListItemIcon> <DateIcon/> </ListItemIcon>
-                            <ListItemText primary={"Household Todos"}/>
+                                  to="/todo/new"
+                                  button key={"Add-Todo"}>
+                            <ListItemIcon> <AssignmentIcon/> </ListItemIcon>
+                            <ListItemText primary={"Create A Task"}/>
+                        </ListItem>
+
+                        <ListItem onClick={drawerItemClicked}
+                                  component={Link}
+                                  to="/items/household"
+                                  button key={"All-TodoItem"}>
+                            <ListItemIcon> <HouseIcon/> </ListItemIcon>
+                            <ListItemText primary={"Household TodoItem/Tasks"}/>
                         </ListItem>
 
                         <ListItem onClick={drawerItemClicked}
                                   component={Link}
                                   to="/history"
-                                  button key={"Past-Todos"}>
+                                  button key={"Past-TodoItem"}>
                             <ListItemIcon> <HistoryIcon/> </ListItemIcon>
-                            <ListItemText primary={"My Past Todos"}/>
+                            <ListItemText primary={"My history"}/>
                         </ListItem>
                     </List>
                 </div>

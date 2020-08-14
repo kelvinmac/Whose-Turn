@@ -9,6 +9,12 @@ namespace Whose_Turn.Context.Entities
     /// </summary>
     public class HouseHold
     {
+        public HouseHold()
+        {
+            Users = new HashSet<User>();
+            Todos = new HashSet<Todo>();
+        }
+
         /// <summary>
         /// Gets or sets the household id
         /// </summary>
@@ -38,5 +44,10 @@ namespace Whose_Turn.Context.Entities
         /// Gets or sets the the users in this household
         /// </summary>
         public ICollection<User> Users { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the collection of todos for this household
+        /// </summary>
+        public ICollection<Todo> Todos { get; set; }
     }
 }

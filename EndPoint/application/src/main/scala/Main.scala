@@ -1,6 +1,5 @@
 import cats.effect.IO.ioEffect
 import cats.effect.{ExitCode, IO, IOApp, Resource}
-import cats.implicits._
 import com.datastax.driver.core.Session
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, ListeningServer, Service}
@@ -8,17 +7,13 @@ import com.twitter.util.Future
 import com.typesafe.scalalogging.LazyLogging
 import config.{AppConfig, CassandraConfig}
 import io.circe.Encoder
-import whoseturn.web.endpoints.CreateTodoEndpoint
-import whoseturn.web.errors.ErrorHandler
-import io.circe.generic.auto._
 import io.finch.circe._
 import io.finch.{Application, Bootstrap, ToAsync}
 import pureconfig.ConfigSource
-import pureconfig.generic.auto._
-import pureconfig._
 import whoseturn.domain.Retry.defaultRetryConfig
-import whoseturn.domain.RetryConfig
 import whoseturn.domain.todos.WhoseTurnTodoRepository
+import whoseturn.web.endpoints.CreateTodoEndpoint
+import whoseturn.web.errors.ErrorHandler
 
 object Main extends IOApp with LazyLogging {
   def run(args: List[String]): IO[ExitCode] = {

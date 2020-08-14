@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace Whose_Turn.Models.Household
 {
     public class HouseholdMember
@@ -6,6 +8,7 @@ namespace Whose_Turn.Models.Household
         /// <summary>
         /// Gets or sets the user id 
         /// </summary>
+        [Required]
         public Guid Id { get; set; }
 
         /// <summary>

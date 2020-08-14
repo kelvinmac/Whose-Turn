@@ -16,33 +16,35 @@ namespace Whose_Turn.Repositories
         /// </summary>
         private DatabaseContext LocalContext { get; }
 
-        public HouseholdRepository(DatabaseContext  context)
-            :base(context)
+        public HouseholdRepository(DatabaseContext context)
+            : base(context)
         {
             LocalContext = context;
         }
 
         public async Task<bool> IsInHouseHold(Guid houseHoldId, Guid userId)
-            => (await LocalContext.HouseHolds.FirstOrDefaultAsync(h => h.Id == houseHoldId))
-                  .Users.Any(u => u.Id == userId);
+        {
+            return (await LocalContext.HouseHolds.Include(h => h.Users)
+                    .FirstOrDefaultAsync(h => h.Id == houseHoldId))
+                .Users.Any(u => u.Id == userId);
+        }
 
 
-        public Task<Guid> UsersHouseHold(Guid userId)
+        public Task<Guid> GetUserHouseHoldId(Guid userId)
             => LocalContext.Users.Where(u => u.Id == userId)
-            .Select(u => u.HouseHoldId)
-            .FirstOrDefaultAsync();
+                .Select(u => u.HouseHoldId)
+                .FirstOrDefaultAsync();
 
         public Task<List<User>> HouseholdUsers(Guid householdId)
             => LocalContext.Users.Where(u => u.HouseHoldId == householdId)
-            .ToListAsync();
+                .ToListAsync();
 
         public Task<List<User>> UserHouseholdMembers(Guid userId)
             => LocalContext.Users.Where(u => u.Id == userId)
-            .Include(u => u.MyHouseHold)
-            .Select(u => u.MyHouseHold)
-            .SelectMany(h => h.Users)
-            .Distinct()
-            .ToListAsync();
-            
+                .Include(u => u.MyHouseHold)
+                .Select(u => u.MyHouseHold)
+                .SelectMany(h => h.Users)
+                .Distinct()
+                .ToListAsync();
     }
 }

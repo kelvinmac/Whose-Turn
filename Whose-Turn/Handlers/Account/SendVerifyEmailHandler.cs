@@ -35,7 +35,7 @@ namespace Whose_Turn.Handlers.Account
             });
 
             _logger.LogInformation(LogEvents.HandlingVerifyEmail, "Sending verification email to user {userId}", message.UserId);
-            var user = await _usermanager.FindUserById(message.UserId);
+            var user = await _usermanager.FindUserByIdAsync(message.UserId);
 
             await context.Send(new SendEmail()
             {

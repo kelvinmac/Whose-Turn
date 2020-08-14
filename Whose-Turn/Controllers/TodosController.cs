@@ -13,21 +13,22 @@ using System.Net;
 using Whose_Turn.Services;
 using Whose_Turn.Models.Todo;
 using Microsoft.AspNetCore.Authorization;
+using Whose_Turn.Controllers.Mixins;
+using Whose_Turn.Models.Household;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Whose_Turn.Controllers
-{
+namespace Whose_Turn.Controllers {
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class TodosController : BaseController
-    {
-        private static class LogEvents
-        {
+    public class TodosController : BaseController {
+        private static class LogEvents {
             public static readonly EventId Patching = new EventId(1, nameof(Patch));
 
             public static readonly EventId Posting = new EventId(2, nameof(Post));
+
+            public static readonly EventId Getting = new EventId(3, nameof(Get));
         }
 
         private readonly ILogger _logger;
@@ -35,101 +36,88 @@ namespace Whose_Turn.Controllers
         private readonly ITodoRepository _todoRepo;
         private readonly IHouseholdRepository _householdRepo;
 
-        public TodosController(IServiceProvider provider)
-        {
+        private readonly HouseholdMixins _householdMixins;
+        private readonly TodosMixins _todosMixins;
+
+        public TodosController(IServiceProvider provider) {
             _logger = provider.GetService<ILogger<TodosController>>();
+            _householdMixins = provider.GetService<HouseholdMixins>();
+            _todosMixins = provider.GetService<TodosMixins>();
 
             _householdRepo = provider.GetService<IHouseholdRepository>();
             _todoRepo = provider.GetService<ITodoRepository>();
         }
 
-        // GET: api/To-dos
+        // GET: api/Todos
         [HttpGet]
-        public IActionResult Get()
-        {
-            return RedirectToAction(nameof(Get), new { id = Guid.NewGuid().ToString() });
-        }
-
-        // GET api/To--dos/5
-        [HttpGet("{id}")]
-        public JsonResult Get(int id)
-        {
-            return Json(new List<Todo> {
-            new Todo()
-            {
-                Id = Guid.NewGuid(),
-                AssignedTo = new List<Guid> { Guid.NewGuid() },
-                CreatedBy = Guid.NewGuid(),
-                DueOn = DateTime.Now.AddDays(1),
-                CreatedOn = DateTime.UtcNow,
-                Task = "Todo test 1"
-            }});
-        }
-
-        // POST api/To-dos
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody]CreateTodoModel todo)
-        {
-            var t = new Todo()
-            {
-                Id = Guid.NewGuid(),
-                Task = todo.Task,
-                DueOn = todo.DueOn,
-                AssignedTo = todo.AssignedTo,
-                CreatedBy = UserId,
-                CreatedOn = DateTime.UtcNow
-            };
-
-            var myHouseHold = await _householdRepo.UsersHouseHold(UserId);
-
-            foreach (var user in todo.AssignedTo)
-            {
-                if (!await _householdRepo.IsInHouseHold(myHouseHold, user))
-                {
-                    _logger.LogWarning(LogEvents.Posting, "Todo cannot be assinged to user {assingedTo} by user {userId}, Not in household {houseHoldId}",
-                        user, UserId, myHouseHold);
-
-                    return new JsonHttpStatusResult(new ErrorModel()
-                    {
-                        Title = "Please validate the information entered",
-                        Status = (int)HttpStatusCode.BadRequest,
-                        TraceId = HttpContext.TraceIdentifier
-                    },
-                        HttpStatusCode.BadRequest);
-                }
-            }
-
-            await _todoRepo.AddNewAsync(t);
-            return Json(t);
-        }
-
-        // PUT api/To-dos/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-
-        }
-
-        // PATCH api/To-dos
-        [HttpPatch("{id}")]
-        public JsonResult Patch(Guid id, [FromBody]Todo todoData)
-        {
+        public async Task<IActionResult> All() {
+            var userTodos = await _todoRepo.GetActiveUserTodosAsync(UserId);
             
-            try
-            {
-                todoData.Task = "lol";
+            var models = this.MapMultipleTodoEntitiesToModels(userTodos);
+            return Json(models);
+        }
+
+        // GET api/Todos/guid
+        [HttpGet("{id}")]
+        public async Task<JsonResult> Get(Guid id) {
+            var todo = await _todoRepo.GetByIdAsync(id);
+
+            if (todo == null) {
+                _logger.LogWarning(LogEvents.Getting, "Could not find a todo with the id {todoId}", id);
+                return this.CreateTodoNotFoundError(id);
             }
-            catch (JsonSerializationException e)
-            {
+
+            var model = this.MapTodoEntityToModel(todo);
+            return Json(model);
+        }
+
+        // POST api/Todo
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] CreateTodoModel model) {
+            var todo = _todosMixins.CreateTodoFromModel(model, UserId);
+
+            foreach (var member in model.Description.Members) {
+                if (!await _householdMixins.IsUserInSameHouseHoldAsync(UserId, member.Id)) {
+                    _logger.LogWarning(LogEvents.Posting,
+                        "User {userId} and user {assignedUserId} not in the same household",
+                        UserId, member.Id);
+
+                    return this.CreateInvalidHouseholdError();
+                }
+
+                todo.AssignedTo.Add(member.Id);
+            }
+
+            await _todoRepo.AddNewAsync(todo);
+            
+            var result = this.MapTodoEntityToModel(todo);
+            result.HouseholdMembers = this.MapUserIdToHouseholdMemberModels(todo.AssignedTo);
+            
+            _logger.LogInformation(LogEvents.Posting, "Successfully created Todo {todoId} for user {userId}",
+                todo.Id, UserId);
+            
+            return Json(result);
+        }
+
+        // PUT api/Todos/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value) { }
+
+        // PATCH api/Todos
+        [HttpPatch("{id}")]
+        public JsonResult Patch(Guid id, [FromBody] Todo todoData) {
+            try {
+                todoData.TodoName = "lol";
+            }
+            catch (JsonSerializationException e) {
                 return Json(new ErrorModel()
                 {
                     Title = e.Message,
-                    Status = (int)HttpStatusCode.InternalServerError,
+                    Status = (int) HttpStatusCode.InternalServerError,
                     TraceId = HttpContext.TraceIdentifier
                 });
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 using (_logger.BeginScope(new Dictionary<string, string>
                 {
                     ["jsonStr"] = JsonConvert.SerializeObject(todoData)
@@ -139,7 +127,7 @@ namespace Whose_Turn.Controllers
                 return new JsonHttpStatusResult(new ErrorModel()
                 {
                     Title = e.Message,
-                    Status = (int)HttpStatusCode.BadRequest,
+                    Status = (int) HttpStatusCode.BadRequest,
                     TraceId = HttpContext.TraceIdentifier
                 }, HttpStatusCode.InternalServerError);
             }
@@ -147,11 +135,8 @@ namespace Whose_Turn.Controllers
             return Json(null);
         }
 
-        // DELETE api/values/5
+        // DELETE api/Todos/guid
         [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-
-        }
+        public void Delete(Guid id) { }
     }
 }

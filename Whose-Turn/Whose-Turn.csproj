@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Context\" />
     <Folder Include="Context\Entities\" />
-    <Folder Include="Migrations\" />
     <Folder Include="Repositories\" />
     <Folder Include="Services\" />
     <Folder Include="Repositories\Base\" />
@@ -50,6 +49,7 @@
     <PackageReference Include="NServiceBus.MSDependencyInjection" Version="0.1.4" />
     <PackageReference Include="SendGrid" Version="9.12.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
+    <PackageReference Include="Seq.Extensions.Logging" Version="4.0.2" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Context\Models\BaseLevel.cs" />
@@ -116,6 +116,14 @@
     <Compile Remove="Context\Entities\PlayerSessions.cs" />
     <Compile Remove="Context\Entities\UserRoles.cs" />
     <Compile Remove="Context\WhoseturnDbContext.cs" />
+    <Compile Remove="Migrations\20200204150708_AddedSomeMoreColumns.cs" />
+    <Compile Remove="Migrations\20200129231238_AddedIndexes.Designer.cs" />
+    <Compile Remove="Migrations\20200129231238_AddedIndexes.cs" />
+    <Compile Remove="Migrations\20200129230352_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200201210801_AddedRelationships.cs" />
+    <Compile Remove="Migrations\20200201210801_AddedRelationships.Designer.cs" />
+    <Compile Remove="Migrations\20200204150708_AddedSomeMoreColumns.Designer.cs" />
+    <Compile Remove="Migrations\20200129230352_InitialCreate.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Database\WhoseTurnDb.db" />

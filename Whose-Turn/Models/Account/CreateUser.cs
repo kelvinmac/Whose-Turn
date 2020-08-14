@@ -22,7 +22,7 @@ namespace Whose_Turn.Models.Account
         /// </summary>
         [Required]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        public string EmailAddress { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets the users password

@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
 using Whose_Turn.Context.Entities;
+using Whose_Turn.Extensions;
 
 namespace Whose_Turn.Context
 {
     public class DatabaseContext : DbContext
     {
-        private static JsonSerializerSettings JsonSerializerSettings => new JsonSerializerSettings { NullValueHandling = NullValueHandling.Include };
+        private static JsonSerializerSettings JsonSerializerSettings => new JsonSerializerSettings
+            {NullValueHandling = NullValueHandling.Include};
 
-        public DatabaseContext()
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+            : base(options)
         {
         }
 
@@ -32,27 +38,50 @@ namespace Whose_Turn.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=Database/WhoseTurnDb.db;");
+            if (!optionsBuilder.IsConfigured)
+                throw new ApplicationException("Datacontext has not been configured");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Todo>(entity =>
             {
-                entity.Property(e => e.AssignedTo)
-                    .HasConversion(s => JsonConvert.SerializeObject(s, JsonSerializerSettings),
-                        s => JsonConvert.DeserializeObject<List<Guid>>(s));
-
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(t => t.Id);
+
+                entity.Property(e => e.AssignedTo)
+                    .HasJsonConversion();
+
+                entity.HasOne(e => e.Preferences)
+                    .WithOne(e => e.Todo)
+                    .HasForeignKey<Todo>(e => e.PreferencesId);
+
+                entity.HasOne(e => e.UsersHouseHold)
+                    .WithMany(e => e.Todos)
+                    .HasForeignKey(e => e.HouseHoldId);
+            });
+
+            modelBuilder.Entity<TodoPreferences>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(t => t.Id);
+
+                entity.Property(e => e.Repeat)
+                    .HasConversion(s => Enum.GetName(s.GetType(), s), v => Enum.Parse<TodoRepeat>(v));
+
+                entity.Property(e => e.Priority)
+                    .HasConversion(s => Enum.GetName(s.GetType(), s), v => Enum.Parse<TodoPriority>(v));
+
+                entity.Property(e => e.Privacy)
+                    .HasConversion(s => Enum.GetName(s.GetType(), s), v => Enum.Parse<TodoPrivacy>(v));
             });
 
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
 
-                entity.HasIndex(e => new { e.Id, e.Email })
-                .IsUnique(true);
+                entity.HasIndex(e => new {e.Id, e.Email})
+                    .IsUnique(true);
 
                 entity.HasOne(e => e.MyHouseHold)
                     .WithMany(e => e.Users)
@@ -63,8 +92,8 @@ namespace Whose_Turn.Context
             {
                 entity.HasKey(e => e.Id);
 
-                entity.HasIndex(e => new { e.Id })
-                .IsUnique(true);
+                entity.HasIndex(e => new {e.Id})
+                    .IsUnique(true);
             });
         }
     }

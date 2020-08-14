@@ -1,20 +1,18 @@
-
-
 import React from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom'
 import {Provider as StoreProvider} from 'react-redux'
-import {NewItem} from './views/NewItem'
+import {NewTodo} from './modules/Todo/NewTodo'
 import {configureStore} from "./store";
-import TodaysItems from './views/TodaysItems'
-import Item from "./views/Item";
-import Home from "./views/Home";
-import Login from "./views/Account/Login";
+import {TodaysItems, Item} from './modules/Items'
+import {Home} from "./modules/Home";
+import {Login, SignUp} from "./modules/Account";
 import MainLayout from "./layouts";
 import EmptyLayout from "./layouts/EmptyLayout";
-import FullScreenLoading from "./Components/Loading/FullScreenLoading";
-import initInterceptors from "./mixins/axios/interceptors";
-import CriticalError from "./Components/Errors/CriticalError";
-import Logout from "./views/Account/Logout";
+import {FullScreenLoading} from "./modules/Loading";
+import {initInterceptors} from "./mixins/axios";
+import {CriticalError} from "./modules/Errors";
+import {Logout} from "./modules/Account";
+import {initUserProfile} from "./mixins/startUpTasks";
 
 export const store = configureStore();
 
@@ -55,9 +53,12 @@ function PrivateRouteWithLayout({component: Component, layout: Layout, ...rest})
 class App extends React.Component {
     constructor(props) {
         super(props);
+    }
 
-        // init the axios interceptors
-        initInterceptors();
+    componentDidMount() {
+        initInterceptors();  // init the axios interceptors
+
+        initUserProfile(store); // Request the users profile
     }
 
     render() {
@@ -65,23 +66,19 @@ class App extends React.Component {
             <StoreProvider store={store}>
                 <CriticalError/>
                 <Switch>
-                    <PrivateRouteWithLayout path="/newItem"
-                                            component={NewItem}
+                    <PrivateRouteWithLayout path="/todo/new"
+                                            component={NewTodo}
                                             layout={MainLayout}/>
 
-                    <PrivateRouteWithLayout path="/items/:id"
+                    <PrivateRouteWithLayout path="/todo/:id"
                                             component={Item}
                                             layout={MainLayout}/>
 
-                    <PrivateRouteWithLayout path="/items/todays"
+                    <PrivateRouteWithLayout path="/items/myitems"
                                             component={TodaysItems}
                                             layout={MainLayout}/>
 
-                    <PrivateRouteWithLayout path="/items/logcomplete"
-                                            component={TodaysItems}
-                                            layout={MainLayout}/>
-
-                    <PrivateRouteWithLayout path="/allhistory"
+                    <PrivateRouteWithLayout path="/items/household"
                                             component={TodaysItems}
                                             layout={MainLayout}/>
 
@@ -99,6 +96,10 @@ class App extends React.Component {
 
                     <RouteWithLayout path="/login"
                                      component={Login}
+                                     layout={EmptyLayout}/>
+
+                    <RouteWithLayout path="/signup"
+                                     component={SignUp}
                                      layout={EmptyLayout}/>
                 </Switch>
             </StoreProvider>

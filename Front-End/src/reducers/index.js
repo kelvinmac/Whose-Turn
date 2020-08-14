@@ -1,9 +1,9 @@
-import userReducer from "../reducers/userReducer";
 import {combineReducers} from "redux";
-import loadingReducer from "./loadingReducer";
-import errorReducer from "./errorReducer";
-import validationReducer from "./validationReducer";
-import todoReducer from "./todoReducer";
+import userReducer from "../modules/Account/reducers/userReducer";
+import loadingReducer from "../modules/Loading/reducers/loadingReducer";
+import errorReducer from "../modules/Errors/reducers/errorReducer";
+import validationReducer from "../modules/Validation/reducers/validationReducer";
+import todoReducer from "../modules/Todo/reducers/todoReducer";
 
 
 const reducers = combineReducers({

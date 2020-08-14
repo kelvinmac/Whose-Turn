@@ -1,0 +1,11 @@
+{
+  "Queries": [
+    "DROP KEYSPACE IF exists todos;",
+    "CREATE KEYSPACE todos WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1 };",
+    "CREATE TABLE todos.Todos_v1\n(\nid          UUID,\ncreatedOn   TIMESTAMP,\ncreatedBy   UUID,\ndueOn       TIMESTAMP,\ntask        TEXT,\nassignedTo  LIST<UUID>,\nisCompleted BOOLEAN,\ncompletedOn TIMESTAMP,\nPRIMARY KEY (id)\n);"
+  ]
+}
+
+
+
+

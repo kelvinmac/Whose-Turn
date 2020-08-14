@@ -61,21 +61,16 @@ namespace Whose_Turn.Controllers
                 }, HttpStatusCode.Conflict);
             }
 
-            var userId = Guid.Parse(result.Token);
-
-            await _endpointInstance.Send(new SendVerifyEmail()
-            {
-                UserId = userId
-            });
+            //var userId = Guid.Parse(result.Token);
+            //await _endpointInstance.Send(new SendVerifyEmail()
+            //{
+            //    UserId = userId
+            //});
 
             _logger.LogInformation(LogEvents.CreatingUser, "Sucessfully place verify email message to on service bus for email {emailAddress}",
-                model.EmailAddress);
+                model.Email);
 
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<User, ProfileModel>())
-                .CreateMapper();
-
-            var user = await _userManager.FindUserById(userId);
-            return Json(mapper.Map<ProfileModel>(user));
+            return Ok();
         }
 
         [HttpPost]
@@ -95,7 +90,7 @@ namespace Whose_Turn.Controllers
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
-            var user = await _userManager.FindUserById(UserId);
+            var user = await _userManager.FindUserByIdAsync(UserId);
 
             return Json(_userProfileMapper.Map<ProfileModel>(user));
         }

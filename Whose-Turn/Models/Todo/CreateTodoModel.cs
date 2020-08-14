@@ -1,23 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Whose_Turn.Models.Todo
 {
     public class CreateTodoModel
     {
         /// <summary>
-        /// Gets or sets the due date
+        /// Gets or sets the todo Prov
         /// </summary>
-        public DateTime DueOn { get; set; }
+        [Required]
+        public TodoPrivacySettings Privacy { get; set; }
 
         /// <summary>
-        /// Gets or sets the to-do task
+        /// Gets or sets the todo's description
         /// </summary>
-        public string Task { get; set; }
+        [Required]
+        public TodoDescription Description { get; set; }
 
         /// <summary>
-        /// Gets or sets a list of users the task is assinged to
+        /// Gets or sets the todo's details
         /// </summary>
-        public List<Guid> AssignedTo { get; set; }
+        [Required]
+        public TodoDetails Details { get; set; }
+
+        /// <summary>
+        /// Gets or sets the todo's preferences
+        /// </summary>
+        [Required] 
+        public Preferences Preferences { get; set; }
     }
 }

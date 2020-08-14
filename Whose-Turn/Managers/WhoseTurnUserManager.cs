@@ -69,9 +69,20 @@ namespace Whose_Turn.Managers
         /// </summary>
         /// <param name="id"> The user identifier</param>
         /// <returns></returns>
-        public Task<User> FindUserById(Guid id)
+        public Task<User> FindUserByIdAsync(Guid id)
         {
             var user = _databaseContext.Users.FindAsync(id).AsTask();
+            return user;
+        }
+
+        /// <summary>
+        /// Retrieves the user with the the given id
+        /// </summary>
+        /// <param name="id"> The user identifier</param>
+        /// <returns></returns>
+        public User FindUserById(Guid id)
+        {
+            var user = _databaseContext.Users.Find(id);
             return user;
         }
 
@@ -147,12 +158,12 @@ namespace Whose_Turn.Managers
         /// <returns></returns>
         public async Task<AuthResult> CreateUser(CreateUserModel model)
         {
-            _logger.LogInformation(LogEvents.CreatingUser, "Creating user with email {emailAddress}", model.EmailAddress);
+            _logger.LogInformation(LogEvents.CreatingUser, "Creating user with email {emailAddress}", model.Email);
 
-            if (_databaseContext.Users.Any(u => u.Email == model.EmailAddress))
+            if (_databaseContext.Users.Any(u => u.Email == model.Email))
             {
                 _logger.LogWarning(LogEvents.CreatingUser, "Could not create user with email {emailAddress}, a user with the given email exists",
-                    model.EmailAddress);
+                    model.Email);
 
                 return new AuthResult
                 {
@@ -166,7 +177,7 @@ namespace Whose_Turn.Managers
                 Id = Guid.NewGuid(),
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Email = model.EmailAddress,
+                Email = model.Email,
                 Hash = _passwordHasher.HashPassword(model.Password),
                 CreatedOn = DateTime.UtcNow,
                 SecurityToken = Guid.NewGuid().ToString(),
@@ -189,7 +200,7 @@ namespace Whose_Turn.Managers
             await _databaseContext.SaveChangesAsync();
 
             _logger.LogInformation(LogEvents.CreatingUser, "Successfully created a user {userId} with email address {emailAddress}",
-                user.Id, model.EmailAddress);
+                user.Id, model.Email);
 
             return new AuthResult
             {
@@ -211,7 +222,7 @@ namespace Whose_Turn.Managers
             var id = new ClaimsIdentity("JWT", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
             var secKey = await GetSecurityTokenAsync(clientId);
 
-            var user = await FindUserById(clientId);
+            var user = await FindUserByIdAsync(clientId);
 
             // Add default claims
             id.AddClaim(new Claim(ClaimTypes.NameIdentifier, clientId.ToString(), ClaimValueTypes.String));

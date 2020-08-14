@@ -3,6 +3,13 @@ import sbt.file
 name := "Whose turn"
 version := "0.1"
 scalaVersion := "2.13.3"
+val circeVersion = "0.12.3"
+
+lazy val circeDeps = Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)
 
 lazy val commonSettings = Seq(
   organization := "com.kevo",
@@ -10,13 +17,13 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= List(
     "org.typelevel"              %% "cats-core"     % "2.1.1",
     "org.typelevel"              %% "cats-effect"   % "2.1.4",
-    "io.circe"                   %% "circe-generic" % "0.13.0",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
     "org.slf4j"                  % "slf4j-api"      % "1.7.5",
     "org.slf4j"                  % "slf4j-simple"   % "1.7.5",
     "com.github.nscala-time"     %% "nscala-time"   % "2.24.0",
     "org.scalatest"              %% "scalatest"     % "3.2.0" % "test"
   ),
+  libraryDependencies ++= circeDeps,
   publish := {}
 )
 

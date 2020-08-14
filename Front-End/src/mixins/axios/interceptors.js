@@ -1,5 +1,5 @@
 import axios from "axios";
-import {tokenExpired, setRefreshToken} from "../../actions/authenticationActions";
+import {tokenExpired, setRefreshToken} from "../../modules/Account/actions/authenticationActions";
 import {store} from "../../App";
 
 export default function initInterceptors() {
@@ -19,16 +19,18 @@ export default function initInterceptors() {
 
 // Expired token interceptors
     axios.interceptors.response.use(response => {
-        const refresh = response.headers["__refresh_token"];
+            const refresh = response.headers["__refresh_token"];
 
-        if(refresh != null) {
-            store.dispatch(setRefreshToken(refresh));
-        }
-        return response;
-    }, error => {
-        if (error.response.status === 401) {
-            store.dispatch(tokenExpired());
-        } else
+            if (refresh != null) {
+                store.dispatch(setRefreshToken(refresh));
+            }
+            return response;
+        }, error => {
+            if (error.response?.status === 401) {
+                store.dispatch(tokenExpired());
+            }
+
             return Promise.reject(error);
-    });
+        }
+    );
 }

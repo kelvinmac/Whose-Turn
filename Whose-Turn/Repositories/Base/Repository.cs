@@ -12,47 +12,47 @@ namespace Whose_Turn.Repositories
             _localContext = context;
         }
 
-        public T GetById(TU id)
+        public virtual T GetById(TU id)
         {
             return _localContext.Find<T>(id);
         }
 
-        public Task<T> GetByIdAsync(TU id)
+        public virtual Task<T> GetByIdAsync(TU id)
         {
             return _localContext.FindAsync<T>(id).AsTask();
         }
 
-        public Task AddNewAsync(T entity)
+        public virtual Task AddNewAsync(T entity)
         {
             _localContext.Add(entity);
             return _localContext.SaveChangesAsync();
         }
 
-        public void AddNew(T entity)
+        public virtual void AddNew(T entity)
         {
             _localContext.Add(entity);
             _localContext.SaveChanges();
         }
 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
             _localContext.Remove(entity);
             _localContext.SaveChanges();
         }
 
-        public Task DeleteAsync(T entity)
+        public virtual Task DeleteAsync(T entity)
         {
             _localContext.Remove(entity);
             return _localContext.SaveChangesAsync();
         }
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
             _localContext.Update(entity);
             _localContext.SaveChanges();
         }
 
-        public Task UpdateAsync(T entity)
+        public virtual Task UpdateAsync(T entity)
         {
             _localContext.Update(entity);
             return _localContext.SaveChangesAsync();

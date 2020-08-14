@@ -21,7 +21,7 @@ namespace Whose_Turn.Services
         /// </summary>
         /// <param name="userId"> The <see cref="User"/> identifier</param>
         /// <returns></returns>
-        Task<Guid> UsersHouseHold(Guid userId);
+        Task<Guid> GetUserHouseHoldId(Guid userId);
 
         /// <summary>
         /// Retrieves the users in the household with the given id

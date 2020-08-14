@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,6 +21,7 @@ using Newtonsoft.Json.Serialization;
 using Whose_Turn.ConfigModels;
 using Whose_Turn.Context;
 using Whose_Turn.Context.Entities;
+using Whose_Turn.Controllers.Mixins;
 using Whose_Turn.Extensions;
 using Whose_Turn.Managers;
 using Whose_Turn.Repositories;
@@ -34,21 +36,26 @@ namespace Whose_Turn
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddSeq(Configuration.GetSection("Seq"));
+            });
+
             services.AddCors();
 
-            services.AddEntityFrameworkSqlite()
-                .AddDbContext<DatabaseContext>();
+            services.AddDbContext<DatabaseContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("WhoseTurnDb")));
 
             var jwtConfig = new JwtTokenConfig();
             Configuration.Bind("JwtTokens", jwtConfig);
 
-            services.AddTransient(services =>
+            services.AddTransient(s =>
             {
                 Configuration.Bind("JwtTokens", jwtConfig);
                 return jwtConfig;
@@ -97,6 +104,7 @@ namespace Whose_Turn
                                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                                     });
 
+            services.AddControllerMixins();
             // services.AddServiceBus(Configuration);
         }
 
