@@ -54,7 +54,9 @@ trait CassandraSupport extends ScalaFutures with BeforeAndAfterAll with LazyLogg
       return
     logger.info(s"Initialising Cassandra with [resource=$initialiseResource]")
 
-    readInitialisationFile(initialiseResource).Queries.foreach(session.execute)
+    readInitialisationFile(initialiseResource).Queries
+      .foreach(session.execute)
+
   }
 
   private def readInitialisationFile(fileName: String): CassandraQueries = {

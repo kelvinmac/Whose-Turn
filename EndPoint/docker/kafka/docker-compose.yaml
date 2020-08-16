@@ -1,29 +1,98 @@
-version: '2'
 
-networks:
-  whoseturn-kafka-net:
-    driver: bridge
-
+version: "3.7"
 services:
-  whoseturn-kafka-zookeeper:
-    image: bitnami/zookeeper
-    networks:
-      - whoseturn-kafka-net
+  whoseturn-zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: whoseturn-zookeeper
     ports:
-      - 2181:2181
+      - "2181:2181"
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+
   whoseturn-kafka:
-    image: bitnami/kafka
-    networks:
-      - whoseturn-kafka-net
-    ports:
-      - 9092-9095:9092
+    image: wurstmeister/kafka
+    container_name: whoseturn-kafka
     depends_on:
-      - whoseturn-kafka-zookeeper
+      - whoseturn-zookeeper
+    ports:
+      - target: 9094
+        published: 9094
+        protocol: tcp
+        mode: host
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_DELETE_TOPIC_ENABLE= true
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=whoseturn-kafka-zookeeper:2181
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9095-9098
+      KAFKA_ZOOKEEPER_CONNECT: whoseturn-zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://whoseturn-kafka:9092,PLAINTEXT_HOST://192.168.8.100:9094
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:9094
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+
+  whoseturn-kafka_2:
+    image: wurstmeister/kafka
+    container_name: whoseturn-kafka_2
+    depends_on:
+      - whoseturn-zookeeper
+    ports:
+      - target: 9096
+        published: 9096
+        protocol: tcp
+        mode: host
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: whoseturn-zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://whoseturn-kafka_2:9092,PLAINTEXT_HOST://192.168.8.100:9096
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:9096
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+
+  whoseturn-kafka_3:
+    image: wurstmeister/kafka
+    container_name: whoseturn-kafka_3
+    depends_on:
+      - whoseturn-zookeeper
+    ports:
+      - target: 9095
+        published: 9095
+        protocol: tcp
+        mode: host
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: whoseturn-zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://whoseturn-kafka_3:9092,PLAINTEXT_HOST://192.168.8.100:9095
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:9095
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+#  kafka2:
+#    image: confluentinc/cp-server
+#    hostname: kafka2
+#    container_name: kafka2
+#    depends_on:
+#      - zookeeper
+#    ports:
+#      - "29092:29092"
+#    environment:
+#      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092,PLAINTEXT_HOST://localhost:29092
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+#      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+#
+#  kafka3:
+#    image: confluentinc/cp-server
+#    hostname: kafka3
+#    container_name: kafka3
+#    depends_on:
+#      - zookeeper
+#    ports:
+#      - "39092:39092"
+#    environment:
+#      KAFKA_BROKER_ID: 3
+#      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092,PLAINTEXT_HOST://localhost:39092
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+#      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'

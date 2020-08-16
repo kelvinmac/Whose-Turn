@@ -3,7 +3,9 @@ import sbt.file
 name := "Whose turn"
 version := "0.1"
 scalaVersion := "2.13.3"
-val circeVersion = "0.12.3"
+
+val circeVersion   = "0.12.3"
+val phantomVersion = "2.59.0"
 
 lazy val circeDeps = Seq(
   "io.circe" %% "circe-core",
@@ -37,9 +39,9 @@ lazy val httpDependancies = Seq(
 
 lazy val cassandraDependancies = Seq(
   libraryDependencies ++= List(
-    "com.datastax.cassandra" % "cassandra-driver-core"    % "3.7.1",
-    "com.datastax.cassandra" % "cassandra-driver-mapping" % "3.10.0",
-    "org.apache.cassandra"   % "cassandra-all"            % "3.11.4"
+    "com.datastax.cassandra" % "cassandra-driver-core" % "3.7.1",
+    "org.apache.cassandra"   % "cassandra-all"         % "3.11.4",
+    "com.outworkers"         %% "phantom-dsl"          % phantomVersion
   )
 )
 
@@ -84,7 +86,7 @@ lazy val application = (project in file("application"))
   .dependsOn(web, domain, testSupport)
   .settings(commonSettings, httpDependancies)
   .settings(
-    name := "pplication",
+    name := "application",
     libraryDependencies ++= List(
       )
   )

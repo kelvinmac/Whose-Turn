@@ -2,7 +2,7 @@
   "Queries": [
     "DROP KEYSPACE IF exists todos;",
     "CREATE KEYSPACE todos WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1 };",
-    "CREATE TABLE todos.Todos_v1\n(\nid          UUID,\ncreatedOn   TIMESTAMP,\ncreatedBy   UUID,\ndueOn       TIMESTAMP,\ntask        TEXT,\nassignedTo  LIST<UUID>,\nisCompleted BOOLEAN,\ncompletedOn TIMESTAMP,\nPRIMARY KEY (id)\n);"
+    "CREATE TABLE todos.Todos_v1\n(\n    id          UUID,\n    version     TEXT,\n    createdOn   TIMESTAMP,\n    createdBy   UUID,\n    dueOn       TIMESTAMP,\n    task        TEXT,\n    assignedTo  LIST<UUID>,\n    isCompleted BOOLEAN,\n    completedOn TIMESTAMP,\n    PRIMARY KEY (id)\n);"
   ]
 }
 

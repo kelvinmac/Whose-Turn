@@ -5,16 +5,18 @@ import java.util.UUID
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import whoseturn.domain.todos.TodoValidationFailure.{InvalidDescription, ParseError}
-import whoseturn.domain.todos.{NewTodo, Todo, WhoseTurnTodoFactory}
+import whoseturn.domain.todos.{CreateTodoRequestBody, Todo, WhoseTurnTodoFactory}
+import whoseturn.todos.DomainFixtures._
 
 class WhoseTurnTodoFactorySpec extends AnyWordSpec with Matchers with NewTodoFixture {
+
   import WhoseTurnTodoFactorySpec._
 
   "WhoseTurnTodoFactory.create" when {
 
     "NewTodo instance is valid" should {
       "create valid Todo from new todo" in {
-        val buildResult = WhoseTurnTodoFactory.create(defaultNewTodo).toEither
+        val buildResult = WhoseTurnTodoFactory.fromCreateTodoRequestBody(defaultNewTodo).toEither
 
         buildResult.isRight mustBe true
 
@@ -29,8 +31,8 @@ class WhoseTurnTodoFactorySpec extends AnyWordSpec with Matchers with NewTodoFix
     "NewTodo instance invalid" should {
       "return validation errors" in {
         val buildResult = WhoseTurnTodoFactory
-          .create(
-            NewTodo(
+          .fromCreateTodoRequestBody(
+            CreateTodoRequestBody(
               dueOn = "INVALID_DATE",
               task = "",
               assignedTo = UUID.randomUUID()

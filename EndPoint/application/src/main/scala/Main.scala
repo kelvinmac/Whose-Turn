@@ -10,12 +10,16 @@ import io.circe.Encoder
 import io.finch.circe._
 import io.finch.{Application, Bootstrap, ToAsync}
 import pureconfig.ConfigSource
-import whoseturn.domain.Retry.defaultRetryConfig
 import whoseturn.domain.todos.WhoseTurnTodoRepository
 import whoseturn.web.endpoints.CreateTodoEndpoint
 import whoseturn.web.errors.ErrorHandler
+import pureconfig.generic.auto._
+import whoseturn.domain.Retry.Implicits._
+
+import scala.concurrent.duration.{FiniteDuration, MILLISECONDS}
 
 object Main extends IOApp with LazyLogging {
+
   def run(args: List[String]): IO[ExitCode] = {
     val config = loadConfig
 
@@ -33,8 +37,9 @@ object Main extends IOApp with LazyLogging {
   }
 
   def serve(port: Int, cassandraConfig: CassandraConfig): IO[ListeningServer] = {
+
     val cassandraSession        = createCassandraSession(cassandraConfig)
-    val whoseTurnTodoRepository = new WhoseTurnTodoRepository(defaultRetryConfig, cassandraSession)
+    val whoseTurnTodoRepository = new WhoseTurnTodoRepository(cassandraSession)
 
     val todoEndpoint = new CreateTodoEndpoint(whoseTurnTodoRepository)
     IO(Http.server.serve(s":$port", service(todoEndpoint)))
