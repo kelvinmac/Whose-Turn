@@ -21,7 +21,7 @@ object ErrorHandler {
 
   val encodeExceptionCirce: Encoder[Exception] = Encoder.instance(e =>
     ErrorResponse(
-      message = Option(e.getMessage).getOrElse("No error message available")
+      message = Option(e.getMessage).getOrElse("Encountered an error without a message available")
     ).asJson
   )
 }

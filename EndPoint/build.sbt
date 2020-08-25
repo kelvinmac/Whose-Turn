@@ -16,6 +16,7 @@ lazy val circeDeps = Seq(
 lazy val commonSettings = Seq(
   organization := "com.kevo",
   scalacOptions += "-Ypartial-unification",
+  resolvers += "Confluent" at "https://packages.confluent.io/maven/",
   libraryDependencies ++= List(
     "org.typelevel"              %% "cats-core"     % "2.1.1",
     "org.typelevel"              %% "cats-effect"   % "2.1.4",
@@ -50,7 +51,9 @@ lazy val domain = (project in file("domain"))
   .settings(
     name := "domain",
     libraryDependencies ++= List(
-      )
+      "io.confluent"     % "kafka-avro-serializer" % "5.5.1",
+      "org.apache.kafka" %% "kafka"                % "2.6.0"
+    )
   )
 
 lazy val testSupport = (project in file("test-support"))
@@ -79,7 +82,8 @@ lazy val web = (project in file("web"))
   .settings(
     name := "Web",
     libraryDependencies ++= List(
-      )
+      "com.sksamuel.avro4s" %% "avro4s-core" % "3.1.1"
+    )
   )
 
 lazy val application = (project in file("application"))
@@ -88,5 +92,6 @@ lazy val application = (project in file("application"))
   .settings(
     name := "application",
     libraryDependencies ++= List(
-      )
+      "com.github.scopt" %% "scopt" % "4.0.0-RC2"
+    )
   )

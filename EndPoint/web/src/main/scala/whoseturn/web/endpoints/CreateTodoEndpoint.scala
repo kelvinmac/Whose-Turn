@@ -13,15 +13,26 @@ import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import whoseturn.domain.CustomEncoders._
 import whoseturn.domain.TodoRepository
-import whoseturn.domain.todos.{CreateTodoRequestBody, Todo, TodoValidationFailure, WhoseTurnTodoFactory}
+import whoseturn.domain.todos.{
+  CreateTodoRequestBody,
+  Todo,
+  TodoFeedItemProducer,
+  TodoValidationFailure,
+  WhoseTurnTodoFactory
+}
 import whoseturn.web.endpoints.CreateTodoEndpoint._
 import whoseturn.domain.CustomEncoders._
+
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success, Try}
 
-class CreateTodoEndpoint(todoRepo: TodoRepository) extends Endpoint.Module[IO] with LazyLogging {
+class CreateTodoEndpoint(todoRepo: TodoRepository, todoFeedItemProducer: TodoFeedItemProducer)
+    extends Endpoint.Module[IO]
+    with LazyLogging {
+
+  val t = ""
 
   private def body: Endpoint[IO, CreateTodoRequestBody] = {
     jsonBody[CreateTodoRequestBody]

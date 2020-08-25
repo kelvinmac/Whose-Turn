@@ -1,0 +1,25 @@
+{
+  "type": "record",
+  "name": "NewTodo",
+  "namespace": "com.whoseturn.todo",
+  "fields": [
+    {
+      "name": "todoId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "createdOn",
+      "type": "string"
+    },
+    {
+      "name": "assignedTo",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    }
+  ]
+}

@@ -2,6 +2,17 @@ package config
 
 case class ServiceConfig(port: Int)
 
-case class CassandraConfig()
+case class CassandraConfig(hostAddress: String, port: Int, user: String = "cassandra", password: String = "cassandra")
 
-case class AppConfig(serviceConfig: ServiceConfig, cassandraConfig: CassandraConfig)
+case class KafkaFeedItemProducerConfig(
+    schemaResourcePath: String,
+    registrySchemaUrl: String,
+    serverAddress: String,
+    topic: String
+)
+
+case class AppConfig(
+    serviceConfig: ServiceConfig,
+    cassandraConfig: CassandraConfig,
+    kafkaFeedItemProducerConfig: KafkaFeedItemProducerConfig
+)

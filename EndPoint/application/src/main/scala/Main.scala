@@ -1,58 +1,37 @@
+import java.io.FileInputStream
+
 import cats.effect.IO.ioEffect
 import cats.effect.{ExitCode, IO, IOApp, Resource}
-import com.datastax.driver.core.Session
-import com.twitter.finagle.http.{Request, Response}
-import com.twitter.finagle.{Http, ListeningServer, Service}
-import com.twitter.util.Future
+import com.twitter.finagle.ListeningServer
+import com.twitter.util.Await
 import com.typesafe.scalalogging.LazyLogging
-import config.{AppConfig, CassandraConfig}
-import io.circe.Encoder
-import io.finch.circe._
-import io.finch.{Application, Bootstrap, ToAsync}
+import config.{AppConfig, ArgParameters}
 import pureconfig.ConfigSource
-import whoseturn.domain.todos.WhoseTurnTodoRepository
-import whoseturn.web.endpoints.CreateTodoEndpoint
-import whoseturn.web.errors.ErrorHandler
 import pureconfig.generic.auto._
-import whoseturn.domain.Retry.Implicits._
-
-import scala.concurrent.duration.{FiniteDuration, MILLISECONDS}
+import cats.syntax.either._
+import scala.io.Source
+import scala.util.{Failure, Success, Try}
 
 object Main extends IOApp with LazyLogging {
 
   def run(args: List[String]): IO[ExitCode] = {
-    val config = loadConfig
+    val io = for {
+      envParams <- ArgParameters.parse(args)
+      config    <- loadConfig
+      serverIo  <- Startup.configure(config, envParams)
+    } yield serverIo
 
-    logger.info(s"Starting web service on port ${config.serviceConfig.port}")
+    io.runAsync {
+        case Left(err) => IO(logger.error("There was an error while starting API", err))
+      }
+      .unsafeRunSync()
 
-    val server =
-      Resource.make(serve(config.serviceConfig.port, config.cassandraConfig))(s =>
-        IO.suspend(implicitly[ToAsync[Future, IO]].apply(s.close()))
-      )
-    server.use(_ => IO.never).as(ExitCode.Success)
+    IO(ExitCode.Success)
   }
 
-  def loadConfig: AppConfig = {
-    ConfigSource.default.loadOrThrow[AppConfig]
+  def loadConfig: IO[AppConfig] = {
+    IO {
+      ConfigSource.default.loadOrThrow[AppConfig]
+    }
   }
-
-  def serve(port: Int, cassandraConfig: CassandraConfig): IO[ListeningServer] = {
-
-    val cassandraSession        = createCassandraSession(cassandraConfig)
-    val whoseTurnTodoRepository = new WhoseTurnTodoRepository(cassandraSession)
-
-    val todoEndpoint = new CreateTodoEndpoint(whoseTurnTodoRepository)
-    IO(Http.server.serve(s":$port", service(todoEndpoint)))
-  }
-
-  def service(todoEndpoint: CreateTodoEndpoint): Service[Request, Response] = {
-    implicit def encodeExceptionCirce: Encoder[Exception] = ErrorHandler.encodeExceptionCirce
-    val jsonEndpoints                                     = todoEndpoint.endpoint
-
-    Bootstrap
-      .serve[Application.Json](jsonEndpoints.handle(ErrorHandler.apiErrorHandlerAndLogger))
-      .toService
-  }
-
-  def createCassandraSession(cassandraConfig: CassandraConfig): Session = ???
 }

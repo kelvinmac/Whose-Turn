@@ -13,11 +13,10 @@ import io.finch.circe._
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.Tables.Table
-
 import org.scalatest.wordspec.AnyWordSpec
 import whoseturn.cassandra.CassandraSupport
 import whoseturn.domain.TodoRepository
-import whoseturn.domain.todos.{CreateTodoRequestBody, Todo}
+import whoseturn.domain.todos.{CreateTodoRequestBody, Todo, TodoFeedItemProducer}
 import whoseturn.todos.{NewTodoFixture, TodoFixture}
 import whoseturn.web.endpoints.CreateTodoEndpointSpec._
 import whoseturn.web.errors.{ErrorHandler, ErrorResponse}
@@ -42,9 +41,11 @@ class CreateTodoEndpointSpec
     override def update(feedItems: Todo): Future[Unit] = Future()
   }
 
+  private val stubbedTodoFeedProducer = new TodoFeedItemProducer {}
+
   implicit def encodeExceptionCirce: Encoder[Exception] = ErrorHandler.encodeExceptionCirce
 
-  private val service = new CreateTodoEndpoint(stubbedTodoRepo).endpoint.toService
+  private val service = new CreateTodoEndpoint(stubbedTodoRepo, stubbedTodoFeedProducer).endpoint.toService
 
   "CreateTodoEndpointSpec.endpoint" should {
     "return 400 bad request" when {
@@ -105,6 +106,8 @@ class CreateTodoEndpointSpec
 }
 
 object CreateTodoEndpointSpec { // Needed to decode Todo
+
+  import whoseturn.domain.CustomEncoders._
   implicit val encodeCreateTodoRequestBody: Encoder[CreateTodoRequestBody] = deriveEncoder[CreateTodoRequestBody]
   implicit val decodeTodo: Decoder[Todo]                                   = deriveDecoder[Todo]
 
