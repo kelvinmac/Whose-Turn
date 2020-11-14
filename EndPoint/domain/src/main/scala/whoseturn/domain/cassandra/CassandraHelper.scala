@@ -13,20 +13,15 @@ final case class CassandraConnectionConfig(hostAddress: String, port: Int, userN
 object CassandraHelper extends LazyLogging {
 
   def buildCluster(config: CassandraConnectionConfig): IO[Cluster] = {
-    IO.async { cb =>
-      Future(
-        Cluster.builder
-          .addContactPoint(config.hostAddress)
-          .withPort(config.port)
-          .withCredentials(config.userName, config.password)
-          .withTimestampGenerator(new AtomicMonotonicTimestampGenerator)
-          .withoutMetrics
-          .withoutJMXReporting
-          .build
-      ).onComplete(f => {
-        logger.info("Cassandra done!")
-        cb(f.toEither)
-      })
+    IO {
+      Cluster.builder
+        .addContactPoint(config.hostAddress)
+        .withPort(config.port)
+        .withCredentials(config.userName, config.password)
+        .withTimestampGenerator(new AtomicMonotonicTimestampGenerator)
+        .withoutMetrics
+        .withoutJMXReporting
+        .build
     }
   }
 }

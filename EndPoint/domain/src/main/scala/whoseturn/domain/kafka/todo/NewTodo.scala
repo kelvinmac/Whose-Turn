@@ -1,4 +1,4 @@
-package whoseturn.domain.todos.kafka.messages
+package whoseturn.domain.kafka.todo
 
 import java.util.UUID
 

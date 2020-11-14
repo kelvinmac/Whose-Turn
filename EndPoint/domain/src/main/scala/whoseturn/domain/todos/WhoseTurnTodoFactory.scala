@@ -1,4 +1,5 @@
 package whoseturn.domain.todos
+
 import java.util.UUID
 
 import cats._
@@ -7,16 +8,16 @@ import cats.implicits._
 import org.joda.time.DateTime
 
 import scala.util.Try
-import whoseturn.domain.todos.TodoValidationFailure._
+import TodoValidationFailure._
 import whoseturn.domain.todos.entities.TodoEntity
 
 object WhoseTurnTodoFactory {
-  def fromCreateTodoRequestBody(newTodo: CreateTodoRequestBody): ValidatedNel[TodoValidationFailure, Todo] = {
+  def fromCreateTodoRequestBody(newTodo: CreateTodoRequestBody): ValidatedNel[TodoValidationFailure, Todo] =
     (
       date(newTodo.dueOn),
       user(newTodo.assignedTo),
       task(newTodo.task)
-    ).mapN((dueDate, assignedUser, task) => {
+    ).mapN { (dueDate, assignedUser, task) =>
       Todo(
         id = UUID.randomUUID,
         createdOn = DateTime.now(),
@@ -27,8 +28,7 @@ object WhoseTurnTodoFactory {
         isCompleted = false,
         completedOn = None
       )
-    })
-  }
+    }
 
   private def date(date: String): ValidatedNel[TodoValidationFailure, DateTime] =
     Try(DateTime.parse(date)).toOption.toValidNel(ParseError("date"))

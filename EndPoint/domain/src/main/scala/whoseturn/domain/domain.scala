@@ -4,7 +4,6 @@ import java.util.UUID
 
 import cats.data._
 import whoseturn.domain.todos.{CreateTodoRequestBody, Todo}
-
 import scala.concurrent.Future
 
 trait TodoFactory {

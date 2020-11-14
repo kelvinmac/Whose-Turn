@@ -1,4 +1,4 @@
-package whoseturn.todos
+package whoseturn.test.support.todos
 
 import java.util.UUID
 import org.joda.time.{DateTime, DateTimeZone}

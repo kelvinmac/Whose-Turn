@@ -1,4 +1,4 @@
-package whoseturn.cassandra
+package whoseturn.test.support.cassandra
 
 final case class CassandraSupportConfig(
     dataFolder: String = "target/cassandraData",

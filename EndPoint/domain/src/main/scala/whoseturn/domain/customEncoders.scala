@@ -1,11 +1,10 @@
 package whoseturn.domain
 
-import cats.data.NonEmptyList
 import io.circe.Decoder.Result
 import io.circe.{Decoder, Encoder, HCursor, Json}
 import org.joda.time.DateTime
 
-object CustomEncoders {
+object customEncoders {
   implicit val DateTimeFormat: Encoder[DateTime] with Decoder[DateTime] =
     new Encoder[DateTime] with Decoder[DateTime] {
       override def apply(d: DateTime): Json =

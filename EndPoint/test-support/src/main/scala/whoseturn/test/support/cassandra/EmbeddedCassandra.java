@@ -1,8 +1,7 @@
-package whoseturn.cassandra;
+package whoseturn.test.support.cassandra;
 
 import com.datastax.driver.core.AtomicMonotonicTimestampGenerator;
 import com.datastax.driver.core.Cluster;
-import com.google.common.io.Resources;
 import com.google.common.net.HostAndPort;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.service.EmbeddedCassandraService;
@@ -81,7 +80,7 @@ public class EmbeddedCassandra {
         _logger.debug("Connecting to local Cassandra server at {}...", hostAndPort);
 
         return Cluster.builder()
-                .addContactPoint(hostAndPort.getHostText())
+                .addContactPoint("localhost")
                 .withPort(hostAndPort.getPort())
                 .withTimestampGenerator(new AtomicMonotonicTimestampGenerator())
                 .withoutMetrics()

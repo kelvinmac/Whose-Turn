@@ -11,8 +11,7 @@ import io.finch.circe.decodeCirce
 import io.finch.{BadRequest, Endpoint, Ok, ValidationRule}
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
-import whoseturn.domain.CustomEncoders._
-import whoseturn.domain.TodoRepository
+import whoseturn.domain.customEncoders._
 import whoseturn.domain.todos.{
   CreateTodoRequestBody,
   Todo,
@@ -20,11 +19,11 @@ import whoseturn.domain.todos.{
   TodoValidationFailure,
   WhoseTurnTodoFactory
 }
-import whoseturn.web.endpoints.CreateTodoEndpoint._
-import whoseturn.domain.CustomEncoders._
+import CreateTodoEndpoint._
+import whoseturn.domain.TodoRepository
+import whoseturn.domain.customEncoders._
 
 import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success, Try}
 

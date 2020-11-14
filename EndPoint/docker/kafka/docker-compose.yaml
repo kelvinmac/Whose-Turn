@@ -1,78 +1,141 @@
 version: "3.7"
 services:
   whoseturn-zookeeper:
-    image: wurstmeister/zookeeper
-    container_name: whoseturn-zookeeper
+    image: confluentinc/cp-zookeeper:5.5.1
+    hostname: zookeeper
+    container_name: zookeeper
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
-  whoseturn-kafka-schema-registry:
-    image: confluentinc/cp-schema-registry
-    container_name: whoseturn-kafka-schema-registry
+  broker-1:
+    image: confluentinc/cp-server:5.5.1
+    hostname: broker-1
+    container_name: broker-1
     depends_on:
       - whoseturn-zookeeper
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-1:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker-1:29092
+      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+
+
+  broker-2:
+    image: confluentinc/cp-server:5.5.1
+    hostname: broker-2
+    container_name: broker-2
+    depends_on:
+      - whoseturn-zookeeper
+    ports:
+      - "9093:9092"
+      - "9102:9101"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-2:29092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker-2:29092
+      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+
+  whoseturn-schema-registry:
+    image: confluentinc/cp-schema-registry:5.5.1
+    hostname: schema-registry
+    container_name: schema-registry
+    depends_on:
+      - whoseturn-zookeeper
+      - broker-1
+      - broker-2
     ports:
       - "8081:8081"
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: whoseturn-zookeeper:2181
-      SCHEMA_REGISTRY_HOST_NAME: whoseturn-kafka-schema-registry
-  #      SCHEMA_REGISTRY_LISTENERS: http://localhost:8081
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 
-  whoseturn-kafka:
-    image: wurstmeister/kafka
-    container_name: whoseturn-kafka
+#  whoseturn-connect:
+#    image: cnfldemos/cp-server-connect-datagen:0.3.2-5.5.0
+#    hostname: connect
+#    container_name: connect
+#    depends_on:
+#      - whoseturn-zookeeper
+#      - broker-1
+#      - broker-2
+#      - whoseturn-schema-registry
+#    ports:
+#      - "8083:8083"
+#    environment:
+#      CONNECT_BOOTSTRAP_SERVERS: 'broker-1:29092'
+#      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+#      CONNECT_REST_PORT: 8083
+#      CONNECT_GROUP_ID: compose-connect-group
+#      CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
+#      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+#      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+#      CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
+#      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+#      CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
+#      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+#      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+#      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+#      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+#      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+#      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+#      CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+#      # CLASSPATH required due to CC-2422
+#      CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-5.5.1.jar
+#      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
+#      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+#      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+#      CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:5.5.1
+    hostname: control-center
+    container_name: control-center
     depends_on:
       - whoseturn-zookeeper
-      - whoseturn-kafka-schema-registry
+      - broker-1
+      - broker-2
+      - whoseturn-schema-registry
+#      - whoseturn-connect
     ports:
-      - target: 9094
-        published: 9094
-        protocol: tcp
-        mode: host
+      - "9021:9021"
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: whoseturn-zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://whoseturn-kafka:9092,PLAINTEXT_HOST://192.168.8.103:9094
-      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:9094
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-
-  whoseturn-kafka_2:
-    image: wurstmeister/kafka
-    container_name: whoseturn-kafka_2
-    depends_on:
-      - whoseturn-zookeeper
-      - whoseturn-kafka-schema-registry
-    ports:
-      - target: 9096
-        published: 9096
-        protocol: tcp
-        mode: host
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: whoseturn-zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://whoseturn-kafka_2:9092,PLAINTEXT_HOST://192.168.8.103:9096
-      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:9096
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-
-  whoseturn-kafka_3:
-    image: wurstmeister/kafka
-    container_name: whoseturn-kafka_3
-    depends_on:
-      - whoseturn-zookeeper
-      - whoseturn-kafka-schema-registry
-    ports:
-      - target: 9095
-        published: 9095
-        protocol: tcp
-        mode: host
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: whoseturn-zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://whoseturn-kafka_3:9092,PLAINTEXT_HOST://192.168.8.103:9095
-      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:9095
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker-1:29092'
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CONTROL_CENTER_CONNECT_CLUSTER: 'connect:8083'
+      CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://ksqldb-server:8088"
+      CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "http://localhost:8088"
+      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021

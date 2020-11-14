@@ -1,69 +1,72 @@
 import sbt.file
+import Dependencies._
 
 name := "Whose turn"
 version := "0.1"
 scalaVersion := "2.13.3"
 
-val circeVersion   = "0.12.3"
-val phantomVersion = "2.59.0"
-
-lazy val circeDeps = Seq(
-  "io.circe" %% "circe-core",
-  "io.circe" %% "circe-generic",
-  "io.circe" %% "circe-parser"
-).map(_ % circeVersion)
-
 lazy val commonSettings = Seq(
   organization := "com.kevo",
   scalacOptions += "-Ypartial-unification",
   resolvers += "Confluent" at "https://packages.confluent.io/maven/",
+  addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full),
   libraryDependencies ++= List(
-    "org.typelevel"              %% "cats-core"     % "2.1.1",
-    "org.typelevel"              %% "cats-effect"   % "2.1.4",
-    "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
-    "org.slf4j"                  % "slf4j-api"      % "1.7.5",
-    "org.slf4j"                  % "slf4j-simple"   % "1.7.5",
-    "com.github.nscala-time"     %% "nscala-time"   % "2.24.0",
-    "org.scalatest"              %% "scalatest"     % "3.2.0" % "test"
+    Circe.circeCore,
+    Circe.circeGeneric,
+    Circe.circeParse,
+    Cats.cats,
+    Cats.catsEffect,
+    Logging.scalaLogging,
+    Time.nScalaTime,
+    testFramework
   ),
-  libraryDependencies ++= circeDeps,
+  dependencyOverrides ++= overrides,
+  excludeDependencies ++= exclusions,
   publish := {}
 )
 
-lazy val httpDependancies = Seq(
+lazy val httpDependencies = Seq(
   libraryDependencies ++= List(
-    "com.github.finagle"    %% "finchx-core"  % "0.32.1",
-    "com.github.finagle"    %% "finchx-circe" % "0.32.1",
-    "com.github.pureconfig" %% "pureconfig"   % "0.13.0"
+    Finagle.finagleCore,
+    Finagle.finagleCirce,
+    Config.pureConfig
   )
 )
 
-lazy val cassandraDependancies = Seq(
+lazy val cassandraDependencies = Seq(
   libraryDependencies ++= List(
-    "com.datastax.cassandra" % "cassandra-driver-core" % "3.7.1",
-    "org.apache.cassandra"   % "cassandra-all"         % "3.11.4",
-    "com.outworkers"         %% "phantom-dsl"          % phantomVersion
+    Cassandra.cassandraDriverCore,
+    Cassandra.cassandraAll,
+    Phantom.phantomDsl
   )
 )
 
 lazy val domain = (project in file("domain"))
-  .settings(commonSettings, cassandraDependancies)
+  .settings(cassandraDependencies, commonSettings)
   .settings(
     name := "domain",
     libraryDependencies ++= List(
-      "io.confluent"     % "kafka-avro-serializer" % "5.5.1",
-      "org.apache.kafka" %% "kafka"                % "2.6.0"
+      Akka.akkaStreams
     )
   )
 
 lazy val testSupport = (project in file("test-support"))
   .dependsOn(domain)
-  .settings(cassandraDependancies, commonSettings)
+  .settings(cassandraDependencies, commonSettings)
   .settings(
+    resolvers ++= Seq(
+      "confluent" at "https://packages.confluent.io/maven/",
+      "jitpack" at "https://jitpack.io"
+    ),
     name := "Test-Support",
     libraryDependencies ++= List(
-      "org.scalatest"      %% "scalatest" % "3.2.0",
-      "org.apache.commons" % "commons-io" % "1.3.2"
+      "org.scalatest" %% "scalatest" % "3.2.0",
+      Apache.commons,
+      Apache.avro,
+      Akka.akkaStreams,
+      Http.scalaJHttp,
+      TestContainer.testContainer,
+      TestContainer.testContainerKafka
     )
   )
 
@@ -78,20 +81,22 @@ lazy val domainTests = (project in file("domain-tests"))
 
 lazy val web = (project in file("web"))
   .dependsOn(domain, testSupport)
-  .settings(commonSettings, httpDependancies)
+  .settings(commonSettings, httpDependencies)
   .settings(
     name := "Web",
     libraryDependencies ++= List(
-      "com.sksamuel.avro4s" %% "avro4s-core" % "3.1.1"
+      Apache.avro4s,
+      Kafka.kafkaClients,
+      Kafka.kafkaAvroSerializer
     )
   )
 
 lazy val application = (project in file("application"))
   .dependsOn(web, domain, testSupport)
-  .settings(commonSettings, httpDependancies)
+  .settings(commonSettings, httpDependencies)
   .settings(
     name := "application",
     libraryDependencies ++= List(
-      "com.github.scopt" %% "scopt" % "4.0.0-RC2"
+      scopt
     )
   )

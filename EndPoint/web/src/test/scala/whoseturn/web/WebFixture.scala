@@ -1,8 +1,8 @@
-package whoseturn.web.support
+package whoseturn.web
 
-import io.circe.{Json, JsonLong, JsonNumber}
+import io.circe.{Json, JsonNumber}
 import whoseturn.domain.todos.CreateTodoRequestBody
-import whoseturn.todos.DomainFixtures._
+import whoseturn.test.support.todos.DomainFixtures.{defaultAssignedTo, defaultDueOn, defaultTodoTask}
 
 trait WebFixture {
   val createTodoRequestBody: CreateTodoRequestBody = CreateTodoRequestBody(

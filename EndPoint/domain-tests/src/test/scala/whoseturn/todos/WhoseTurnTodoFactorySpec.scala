@@ -6,9 +6,10 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import whoseturn.domain.todos.TodoValidationFailure.{InvalidDescription, ParseError}
 import whoseturn.domain.todos.{CreateTodoRequestBody, Todo, WhoseTurnTodoFactory}
-import whoseturn.todos.DomainFixtures._
+import whoseturn.test.support.todos.DomainFixtures._
+import whoseturn.test.support.todos.CreateTodoRequestBodyFixture
 
-class WhoseTurnTodoFactorySpec extends AnyWordSpec with Matchers with NewTodoFixture {
+class WhoseTurnTodoFactorySpec extends AnyWordSpec with Matchers with CreateTodoRequestBodyFixture {
 
   import WhoseTurnTodoFactorySpec._
 
@@ -16,7 +17,7 @@ class WhoseTurnTodoFactorySpec extends AnyWordSpec with Matchers with NewTodoFix
 
     "NewTodo instance is valid" should {
       "create valid Todo from new todo" in {
-        val buildResult = WhoseTurnTodoFactory.fromCreateTodoRequestBody(defaultNewTodo).toEither
+        val buildResult = WhoseTurnTodoFactory.fromCreateTodoRequestBody(defaultCreateTodoRequestBody).toEither
 
         buildResult.isRight mustBe true
 

@@ -14,21 +14,21 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.Tables.Table
 import org.scalatest.wordspec.AnyWordSpec
-import whoseturn.cassandra.CassandraSupport
 import whoseturn.domain.TodoRepository
+import whoseturn.domain.kafka.todo.NewTodo
 import whoseturn.domain.todos.{CreateTodoRequestBody, Todo, TodoFeedItemProducer}
-import whoseturn.todos.{NewTodoFixture, TodoFixture}
+import whoseturn.test.support.cassandra.CassandraSupport
+import whoseturn.test.support.todos.{CreateTodoRequestBodyFixture, TodoFixture}
+import whoseturn.web.WebFixture
 import whoseturn.web.endpoints.CreateTodoEndpointSpec._
 import whoseturn.web.errors.{ErrorHandler, ErrorResponse}
-import whoseturn.web.support.WebFixture
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 
 class CreateTodoEndpointSpec
     extends AnyWordSpec
     with Matchers
-    with NewTodoFixture
+    with CreateTodoRequestBodyFixture
     with TodoFixture
     with WebFixture
     with CassandraSupport {
@@ -41,13 +41,16 @@ class CreateTodoEndpointSpec
     override def update(feedItems: Todo): Future[Unit] = Future()
   }
 
-  private val stubbedTodoFeedProducer = new TodoFeedItemProducer {}
+  private val stubbedTodoFeedProducer = new TodoFeedItemProducer {
+    override def addTodoFeedItem(todoFeedItem: NewTodo): Future[Unit] = Future()
+  }
 
   implicit def encodeExceptionCirce: Encoder[Exception] = ErrorHandler.encodeExceptionCirce
 
   private val service = new CreateTodoEndpoint(stubbedTodoRepo, stubbedTodoFeedProducer).endpoint.toService
 
   "CreateTodoEndpointSpec.endpoint" should {
+
     "return 400 bad request" when {
       "validation errors occur" in {
         val baseRequestBody = createTodoRequestBody.asJson
@@ -105,9 +108,8 @@ class CreateTodoEndpointSpec
   }
 }
 
-object CreateTodoEndpointSpec { // Needed to decode Todo
-
-  import whoseturn.domain.CustomEncoders._
+object CreateTodoEndpointSpec {
+  import whoseturn.domain.customEncoders._ // Needed to decode Todo
   implicit val encodeCreateTodoRequestBody: Encoder[CreateTodoRequestBody] = deriveEncoder[CreateTodoRequestBody]
   implicit val decodeTodo: Decoder[Todo]                                   = deriveDecoder[Todo]
 

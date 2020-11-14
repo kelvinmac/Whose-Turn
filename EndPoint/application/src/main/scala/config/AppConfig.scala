@@ -5,7 +5,6 @@ case class ServiceConfig(port: Int)
 case class CassandraConfig(hostAddress: String, port: Int, user: String = "cassandra", password: String = "cassandra")
 
 case class KafkaFeedItemProducerConfig(
-    schemaResourcePath: String,
     registrySchemaUrl: String,
     serverAddress: String,
     topic: String

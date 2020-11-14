@@ -1,4 +1,4 @@
-package whoseturn.cassandra
+package whoseturn.test.support.cassandra
 
 import com.datastax.driver.core.{Cluster, Session}
 import com.typesafe.scalalogging.LazyLogging
@@ -6,7 +6,7 @@ import io.circe.{Decoder, ParsingFailure, parser}
 import io.circe.generic.semiauto.deriveDecoder
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterAll, Suite}
-import whoseturn.cassandra.CassandraSupport.cassandraQueriesDecoder
+import CassandraSupport.cassandraQueriesDecoder
 
 import scala.io.Source
 

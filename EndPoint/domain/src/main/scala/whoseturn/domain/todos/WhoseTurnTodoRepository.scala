@@ -4,11 +4,11 @@ import java.util.UUID
 
 import com.datastax.driver.core.Session
 import com.outworkers.phantom.dsl.context
-import whoseturn.domain.Retry.Implicits.defaultFutureRetry
-import whoseturn.domain.Retry.Retry._
 import whoseturn.domain.Retry.RetryConfig
 import whoseturn.domain.TodoRepository
 import whoseturn.domain.todos.entities.TodosDatabase
+import whoseturn.domain.Retry.Implicits.defaultFutureRetry
+import whoseturn.domain.Retry.Retry._
 
 import scala.concurrent.Future
 

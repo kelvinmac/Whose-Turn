@@ -3,21 +3,23 @@ package whoseturn.todos
 import java.util.UUID
 
 import com.datastax.driver.core.Session
-import com.outworkers.phantom.connectors.KeySpace
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import whoseturn.cassandra.CassandraSupport
 import whoseturn.domain.Retry.Implicits._
-import whoseturn.domain.todos.entities.{TodoEntity, TodosDatabase, TodosTable}
+import whoseturn.domain.todos.entities.{TodoEntity, TodosDatabase}
 import whoseturn.domain.todos.{WhoseTurnTodoFactory, WhoseTurnTodoRepository}
-import whoseturn.todos.WhoseTurnTodoRepositorySpec.{addTodosToCassandra, readTodoFromCassandra}
-import whoseturn.todos.DomainFixtures._
+import WhoseTurnTodoRepositorySpec.readTodoFromCassandra
+import cats.effect.IO
+import whoseturn.domain.Retry.RetryIO
+import whoseturn.test.support.cassandra.CassandraSupport
+import whoseturn.test.support.todos.DomainFixtures.defaultTodoId
+import whoseturn.test.support.todos.{CreateTodoRequestBodyFixture, TodoFixture}
 
 class WhoseTurnTodoRepositorySpec
     extends AnyWordSpec
     with Matchers
-    with NewTodoFixture
+    with CreateTodoRequestBodyFixture
     with TodoFixture
     with CassandraSupport {
 

@@ -1,7 +1,7 @@
-package whoseturn.todos
+package whoseturn.test.support.todos
 
+import DomainFixtures._
 import whoseturn.domain.todos.Todo
-import whoseturn.todos.DomainFixtures._
 
 trait TodoFixture {
   val defaultTodo: Todo = Todo(

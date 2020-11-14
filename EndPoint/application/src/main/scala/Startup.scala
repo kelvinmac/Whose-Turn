@@ -1,6 +1,6 @@
 import java.util.Properties
 
-import cats.effect.{IO, Resource}
+import cats.effect._
 import com.datastax.driver.core.Session
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Http, ListeningServer, Service}
@@ -14,7 +14,7 @@ import org.apache.kafka.common.serialization.StringSerializer
 import whoseturn.domain.Retry.Implicits.defaultRetryConfig
 import whoseturn.domain.cassandra.{CassandraConnectionConfig, CassandraHelper}
 import whoseturn.domain.todos.{TodoFeedItemProducer, WhoseTurnTodoRepository}
-import whoseturn.todos.KafkaTodoFeedItemProducer
+import whoseturn.todos.{KafkaNewTodoNotificationService, NewTodoNotificationServiceConfig}
 import whoseturn.web.endpoints.CreateTodoEndpoint
 import whoseturn.web.errors.ErrorHandler
 
@@ -76,7 +76,14 @@ object Startup extends LazyLogging {
       instanceId: String
   ): IO[TodoFeedItemProducer] = {
     val properties = createTodoFeedKafkaProperties(kafkaConfig, instanceId)
-    KafkaTodoFeedItemProducer(properties, kafkaConfig.schemaResourcePath)
+    val config = NewTodoNotificationServiceConfig(
+      topicName = "",
+      namespace = "",
+      triggeredBy = "",
+      kafkaProperties = properties,
+      retryConfig = defaultRetryConfig
+    )
+    KafkaNewTodoNotificationService(config)
   }
 
   private def createTodoFeedKafkaProperties(
@@ -91,7 +98,6 @@ object Startup extends LazyLogging {
     properties.put("value.serializer", classOf[KafkaAvroSerializer].getCanonicalName)
     properties.put("schema.registry.url", kafkaConfig.registrySchemaUrl)
     properties.put("client.id", instanceId)
-    properties.put("batch.size", "0") // For testing purposes
 
     properties
   }
